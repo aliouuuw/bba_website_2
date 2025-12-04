@@ -1,0 +1,10 @@
+{
+  "name": "bba-website",
+  "version": "1.0.0",
+  "description": "BBA FinTech Landing Page",
+  "scripts": {
+    "dev": "bun --hot server.js",
+    "build": "bun build ./index.html --outdir=./dist",
+    "preview": "bun --hot ./dist/index.html"
+  }
+}
