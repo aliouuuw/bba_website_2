@@ -51,7 +51,7 @@ const server = serve({
     // SPA Routes - all serve the Preact app (client-side routing handles the rest)
     "/": app,
     "/blog": app,
-    "/blog-post": app,
+    "/blog/*": app,
     "/contact": app,
     "/strategic-command-center": app,
     "/risk-advisor": app,

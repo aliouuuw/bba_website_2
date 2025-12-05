@@ -12,7 +12,7 @@ export default function App() {
     <Router>
       <Route path="/" component={Home} />
       <Route path="/blog" component={Blog} />
-      <Route path="/blog-post" component={BlogPost} />
+      <Route path="/blog/:slug" component={BlogPost} />
       <Route path="/contact" component={Contact} />
       <Route path="/strategic-command-center" component={StrategicCommandCenter} />
       <Route path="/risk-advisor" component={RiskAdvisor} />

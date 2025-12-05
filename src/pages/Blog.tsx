@@ -1,11 +1,17 @@
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import { getAllPosts } from "../lib/blogData";
 
-const blogPosts = [
-  { date: "Dec 04, 2025", category: "Strategy", title: "The Future of AI in Banking Risk Management", description: "How predictive analytics is transforming how financial institutions approach risk mitigation and compliance.", gradient: "linear-gradient(135deg, var(--color-navy), var(--color-teal))" },
-  { date: "Nov 28, 2025", category: "Compliance", title: "Navigating the New Regulatory Landscape", description: "A deep dive into the latest regulatory changes and how automated reporting can ensure 100% compliance.", gradient: "linear-gradient(135deg, var(--color-navy), var(--color-lavender))" },
-  { date: "Nov 15, 2025", category: "Technology", title: "From Data to Decision: The BBA Approach", description: "Why traditional dashboards are failing modern banks and how actionable intelligence is the answer.", gradient: "linear-gradient(135deg, var(--color-teal), var(--color-navy))" },
+const gradients = [
+  "linear-gradient(135deg, var(--color-navy), var(--color-teal))",
+  "linear-gradient(135deg, var(--color-navy), var(--color-lavender))",
+  "linear-gradient(135deg, var(--color-teal), var(--color-navy))",
 ];
+
+function formatDate(dateStr: string): string {
+  const date = new Date(dateStr);
+  return date.toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" });
+}
 
 export default function Blog() {
   return (
@@ -29,14 +35,14 @@ export default function Blog() {
         <section class="blog-section" style={{ padding: "6rem 0", background: "var(--color-off-white)" }}>
           <div class="container">
             <div class="blog-grid">
-              {blogPosts.map((post, i) => (
-                <article class="blog-card" key={i}>
-                  <div class="blog-image" style={{ background: post.gradient }}></div>
+              {getAllPosts().map((post, i) => (
+                <article class="blog-card" key={post.slug}>
+                  <div class="blog-image" style={{ background: gradients[i % gradients.length] }}></div>
                   <div class="blog-content">
-                    <div class="blog-meta font-mono">{post.date} • {post.category}</div>
+                    <div class="blog-meta font-mono">{formatDate(post.date)} • {post.category}</div>
                     <h3>{post.title}</h3>
                     <p>{post.description}</p>
-                    <a href="/blog-post" class="read-more font-mono">Read Article -&gt;</a>
+                    <a href={`/blog/${post.slug}`} class="read-more font-mono">Read Article -&gt;</a>
                   </div>
                 </article>
               ))}
