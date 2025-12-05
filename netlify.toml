@@ -2,13 +2,7 @@
   command = "bun run build"
   publish = "dist"
 
-# Handle SPA routing - redirect all routes to index.html
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
-
-# But serve static assets directly
+# Serve static assets directly
 [[redirects]]
   from = "/assets/*"
   to = "/assets/:splat"
@@ -17,6 +11,19 @@
 [[redirects]]
   from = "/styles.css"
   to = "/styles.css"
+  status = 200
+
+# Copy admin CSS to dist during build (handled by prerender script)
+[[redirects]]
+  from = "/src/admin.css"
+  to = "/admin.css"
+  status = 200
+
+# Handle SPA routing for client-side navigation - this should be LAST
+# This catches any route that doesn't match a static file
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
   status = 200
 
 # Headers for caching

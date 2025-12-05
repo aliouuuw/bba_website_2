@@ -14,6 +14,7 @@ import Contact from "../src/pages/Contact";
 import StrategicCommandCenter from "../src/pages/StrategicCommandCenter";
 import RiskAdvisor from "../src/pages/RiskAdvisor";
 import ComplianceCopilot from "../src/pages/ComplianceCopilot";
+import Admin from "../src/pages/Admin";
 
 const DIST_DIR = "./dist";
 const CONTENT_DIR = "./content/blog";
@@ -89,6 +90,7 @@ async function prerender() {
     { path: "strategic-command-center/index.html", component: <StrategicCommandCenter />, title: "AI Strategic Command Center | BBA FinTech", description: "Your AI co-pilot for market leadership" },
     { path: "risk-advisor/index.html", component: <RiskAdvisor />, title: "AI Risk Advisor Platform | BBA FinTech", description: "Predict, monitor, and mitigate financial risks" },
     { path: "compliance-copilot/index.html", component: <ComplianceCopilot />, title: "AI Compliance Co-Pilot | BBA FinTech", description: "Turn regulatory burden into strategic advantage" },
+    { path: "admin/index.html", component: <Admin />, title: "Admin | BBA FinTech", description: "Content management dashboard" },
   ];
 
   for (const page of staticPages) {
@@ -114,6 +116,8 @@ async function prerender() {
   console.log("\n📦 Copying static assets...");
   await Bun.write(join(DIST_DIR, "styles.css"), Bun.file("./styles.css"));
   console.log("  ✓ styles.css");
+  await Bun.write(join(DIST_DIR, "admin.css"), Bun.file("./src/admin.css"));
+  console.log("  ✓ admin.css");
 
   // Copy assets folder
   const assetsDir = "./assets";
