@@ -7,8 +7,8 @@ const GITHUB_BRANCH = process.env.GITHUB_BRANCH || "main";
 const GITHUB_TOKEN = process.env.GITHUB_PAT || "";
 const CONTENT_PATH = "content/blog";
 
-// Import the pre-generated blog posts JSON (generated at build time)
-import blogPosts from "./blog-posts.json";
+// Fallback to bundled posts if GitHub fetch fails
+import blogPostsFallback from "./blog-posts.json";
 
 interface BlogPost {
   filename: string;
@@ -61,6 +61,32 @@ async function getFileSHA(path: string): Promise<string | null> {
   }
 }
 
+// Parse frontmatter from markdown content
+function parseFrontmatter(content: string): { data: Record<string, string>; content: string } {
+  const match = content.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
+  if (!match) return { data: {}, content };
+  
+  const frontmatter = match[1];
+  const body = match[2];
+  const data: Record<string, string> = {};
+  
+  frontmatter.split('\n').forEach(line => {
+    const colonIndex = line.indexOf(':');
+    if (colonIndex > 0) {
+      const key = line.slice(0, colonIndex).trim();
+      let value = line.slice(colonIndex + 1).trim();
+      // Remove quotes
+      if ((value.startsWith('"') && value.endsWith('"')) || 
+          (value.startsWith("'") && value.endsWith("'"))) {
+        value = value.slice(1, -1);
+      }
+      data[key] = value;
+    }
+  });
+  
+  return { data, content: body.trim() };
+}
+
 const handler: Handler = async (event: HandlerEvent) => {
   // CORS headers for preflight
   const headers = {
@@ -99,7 +125,7 @@ const handler: Handler = async (event: HandlerEvent) => {
   try {
     switch (event.httpMethod) {
       case "GET":
-        return await handleGetPosts(headers);
+        return await handleGetPosts(event, headers);
       case "POST":
         return await handleSavePost(event, headers);
       case "DELETE":
@@ -121,9 +147,58 @@ const handler: Handler = async (event: HandlerEvent) => {
   }
 };
 
-async function handleGetPosts(headers: Record<string, string>) {
-  // Use pre-bundled posts for faster loading
-  const posts: BlogPost[] = (blogPosts as any[]).map((post) => ({
+async function handleGetPosts(event: HandlerEvent, headers: Record<string, string>) {
+  // Check if fresh data is requested
+  const params = new URLSearchParams(event.rawQuery || "");
+  const fresh = params.get("fresh") === "true";
+  
+  if (fresh) {
+    // Fetch directly from GitHub for fresh data
+    try {
+      const data = await githubRequest(
+        `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${CONTENT_PATH}?ref=${GITHUB_BRANCH}`
+      );
+      
+      const posts: BlogPost[] = [];
+      
+      for (const file of data) {
+        if (!file.name.endsWith('.md')) continue;
+        
+        // Fetch file content
+        const fileData = await githubRequest(
+          `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${CONTENT_PATH}/${file.name}?ref=${GITHUB_BRANCH}`
+        );
+        
+        const content = Buffer.from(fileData.content, 'base64').toString('utf-8');
+        const { data: frontmatter, content: body } = parseFrontmatter(content);
+        
+        posts.push({
+          filename: file.name,
+          slug: frontmatter.slug || file.name.replace(/\.md$/, ''),
+          title: frontmatter.title || 'Untitled',
+          date: frontmatter.date || '',
+          category: frontmatter.category || 'General',
+          description: frontmatter.description || '',
+          readTime: frontmatter.readTime || '5 min read',
+          content: body,
+        });
+      }
+      
+      posts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({ posts, source: 'github' }),
+      };
+    } catch (error) {
+      console.error("Error fetching from GitHub, using fallback:", error);
+      // Fall through to bundled data
+    }
+  }
+  
+  // Use pre-bundled posts (fast, but may be stale)
+  const posts: BlogPost[] = (blogPostsFallback as any[]).map((post) => ({
     filename: `${post.date}-${post.slug}.md`,
     slug: post.slug,
     title: post.title,
@@ -139,7 +214,7 @@ async function handleGetPosts(headers: Record<string, string>) {
   return {
     statusCode: 200,
     headers,
-    body: JSON.stringify({ posts }),
+    body: JSON.stringify({ posts, source: 'cache' }),
   };
 }
 

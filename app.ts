@@ -169,7 +169,15 @@ ${post.content}`;
           // Regenerate blog data
           Bun.spawn(["bun", "run", "generate-blog"], { cwd: process.cwd() });
 
-          return Response.json({ success: true, filename });
+          return Response.json({ 
+            success: true, 
+            filename,
+            message: "Post saved locally!",
+            post: {
+              ...post,
+              filename,
+            }
+          });
         } catch (err) {
           return Response.json({ error: String(err) }, { status: 500 });
         }

@@ -1,14 +1,23 @@
 import { BlogPostMeta } from "../../types";
 
+interface BuildStatus {
+  status: "building" | "ready" | "error" | "queued" | "unknown";
+  commit_message?: string;
+  created_at?: string;
+}
+
 interface AdminDashboardProps {
   posts: BlogPostMeta[];
   loading: boolean;
   error?: string;
   success?: string;
+  buildStatus?: BuildStatus | null;
+  dataSource?: "cache" | "github";
   onEdit: (post: BlogPostMeta) => void;
   onDelete: (filename: string) => void;
   onCreate: () => void;
   onLogout: () => void;
+  onRefresh: () => void;
 }
 
 export default function AdminDashboard({ 
@@ -16,11 +25,43 @@ export default function AdminDashboard({
   loading,
   error,
   success,
+  buildStatus,
+  dataSource,
   onEdit, 
   onDelete, 
   onCreate, 
-  onLogout 
+  onLogout,
+  onRefresh,
 }: AdminDashboardProps) {
+  const getBuildStatusColor = () => {
+    switch (buildStatus?.status) {
+      case "building":
+      case "queued":
+        return "#f59e0b"; // amber
+      case "ready":
+        return "#10b981"; // green
+      case "error":
+        return "#ef4444"; // red
+      default:
+        return "#6b7280"; // gray
+    }
+  };
+
+  const getBuildStatusText = () => {
+    switch (buildStatus?.status) {
+      case "building":
+        return "Building...";
+      case "queued":
+        return "Queued";
+      case "ready":
+        return "Live";
+      case "error":
+        return "Build Failed";
+      default:
+        return "Unknown";
+    }
+  };
+
   return (
     <div className="admin-container">
       <header className="admin-header">
@@ -36,8 +77,40 @@ export default function AdminDashboard({
           }}>
             {posts.length} Posts
           </span>
+          {buildStatus && (
+            <span style={{ 
+              background: `${getBuildStatusColor()}20`,
+              color: getBuildStatusColor(),
+              padding: '0.25rem 0.75rem', 
+              borderRadius: '999px',
+              fontSize: '0.75rem',
+              fontWeight: 700,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem'
+            }}>
+              {(buildStatus.status === "building" || buildStatus.status === "queued") && (
+                <span style={{
+                  width: '8px',
+                  height: '8px',
+                  borderRadius: '50%',
+                  background: getBuildStatusColor(),
+                  animation: 'pulse 1.5s infinite'
+                }} />
+              )}
+              {getBuildStatusText()}
+            </span>
+          )}
         </div>
         <div style={{ display: 'flex', gap: '0.75rem' }}>
+          <button 
+            onClick={onRefresh} 
+            className="btn-outline btn-sm"
+            disabled={loading}
+            title="Fetch latest posts from GitHub"
+          >
+            ↻ Refresh
+          </button>
           <button onClick={onCreate} className="admin-btn btn-sm">
             + New Post
           </button>
@@ -49,6 +122,31 @@ export default function AdminDashboard({
           </button>
         </div>
       </header>
+
+      {/* Data Source Indicator */}
+      {dataSource && (
+        <div style={{
+          padding: '0.5rem 2rem',
+          fontSize: '0.75rem',
+          color: 'var(--color-periwinkle)',
+          borderBottom: '1px solid rgba(0,0,0,0.05)'
+        }}>
+          Data source: <strong>{dataSource === 'github' ? '🔄 Live from GitHub' : '📦 Cached (last build)'}</strong>
+          {dataSource === 'cache' && (
+            <span style={{ marginLeft: '0.5rem' }}>
+              — <button onClick={onRefresh} style={{ 
+                background: 'none', 
+                border: 'none', 
+                color: 'var(--color-teal)', 
+                cursor: 'pointer',
+                textDecoration: 'underline',
+                padding: 0,
+                font: 'inherit'
+              }}>Load fresh data</button>
+            </span>
+          )}
+        </div>
+      )}
 
       {/* Success Message */}
       {success && (
@@ -66,9 +164,11 @@ export default function AdminDashboard({
           <span style={{ fontSize: '1.25rem' }}>✓</span>
           <div>
             <strong>{success}</strong>
-            <div style={{ fontSize: '0.85rem', opacity: 0.8, marginTop: '0.25rem' }}>
-              Refresh the blog page after the rebuild completes to see your changes.
-            </div>
+            {buildStatus?.status === "building" && (
+              <div style={{ fontSize: '0.85rem', opacity: 0.8, marginTop: '0.25rem' }}>
+                Site is rebuilding. Changes will be live in ~1-2 minutes.
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -134,6 +234,10 @@ export default function AdminDashboard({
       <style>{`
         @keyframes spin {
           to { transform: rotate(360deg); }
+        }
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.5; }
         }
       `}</style>
     </div>

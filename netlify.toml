@@ -24,6 +24,11 @@
   to = "/.netlify/functions/contact"
   status = 200
 
+[[redirects]]
+  from = "/api/admin/build-status"
+  to = "/.netlify/functions/build-status"
+  status = 200
+
 # Serve static assets directly
 [[redirects]]
   from = "/assets/*"

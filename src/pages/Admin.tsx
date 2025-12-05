@@ -5,6 +5,12 @@ import AdminEditor from "../components/admin/AdminEditor";
 import { BlogPostMeta } from "../types";
 import "../admin.css";
 
+interface BuildStatus {
+  status: "building" | "ready" | "error" | "queued" | "unknown";
+  commit_message?: string;
+  created_at?: string;
+}
+
 export default function Admin() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [posts, setPosts] = useState<BlogPostMeta[]>([]);
@@ -13,6 +19,8 @@ export default function Admin() {
   const [success, setSuccess] = useState("");
   const [editingPost, setEditingPost] = useState<BlogPostMeta | null>(null);
   const [isNewPost, setIsNewPost] = useState(false);
+  const [buildStatus, setBuildStatus] = useState<BuildStatus | null>(null);
+  const [dataSource, setDataSource] = useState<"cache" | "github">("cache");
 
   // Check for stored session
   useEffect(() => {
@@ -25,14 +33,23 @@ export default function Admin() {
   // Load posts when authenticated
   useEffect(() => {
     if (isAuthenticated) {
-      loadPosts();
+      loadPosts(false);
+      checkBuildStatus();
     }
   }, [isAuthenticated]);
+
+  // Poll build status when building
+  useEffect(() => {
+    if (buildStatus?.status === "building" || buildStatus?.status === "queued") {
+      const interval = setInterval(checkBuildStatus, 5000);
+      return () => clearInterval(interval);
+    }
+  }, [buildStatus?.status]);
 
   // Auto-clear success message
   useEffect(() => {
     if (success) {
-      const timer = setTimeout(() => setSuccess(""), 8000);
+      const timer = setTimeout(() => setSuccess(""), 10000);
       return () => clearTimeout(timer);
     }
   }, [success]);
@@ -75,11 +92,31 @@ export default function Admin() {
     return { Authorization: `Bearer ${token}` };
   };
 
-  const loadPosts = async () => {
+  const checkBuildStatus = async () => {
+    try {
+      const res = await fetch("/api/admin/build-status", {
+        headers: getAuthHeaders(),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setBuildStatus(data);
+        
+        // Auto-refresh posts when build completes
+        if (data.status === "ready" && buildStatus?.status === "building") {
+          loadPosts(true);
+        }
+      }
+    } catch (err) {
+      console.error("Failed to check build status:", err);
+    }
+  };
+
+  const loadPosts = async (fresh: boolean = false) => {
     setLoading(true);
     setError("");
     try {
-      const res = await fetch("/api/admin/posts", {
+      const url = fresh ? "/api/admin/posts?fresh=true" : "/api/admin/posts";
+      const res = await fetch(url, {
         headers: getAuthHeaders(),
       });
       if (!res.ok) {
@@ -91,6 +128,11 @@ export default function Admin() {
       }
       const data = await res.json();
       setPosts(data.posts || []);
+      setDataSource(data.source || "cache");
+      
+      if (fresh) {
+        setSuccess("Posts refreshed from GitHub!");
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load posts");
     } finally {
@@ -136,7 +178,10 @@ export default function Admin() {
       
       setEditingPost(null);
       setIsNewPost(false);
-      setSuccess(data.message || "Post saved successfully! Site will rebuild in ~1-2 minutes.");
+      setSuccess(data.message || "Post saved! Site rebuilding...");
+      
+      // Start checking build status
+      setTimeout(checkBuildStatus, 2000);
       
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to save post");
@@ -166,7 +211,10 @@ export default function Admin() {
       
       // Optimistic update - remove from local state immediately  
       setPosts(prevPosts => prevPosts.filter(p => p.filename !== filename));
-      setSuccess(data.message || "Post deleted! Site will rebuild in ~1-2 minutes.");
+      setSuccess(data.message || "Post deleted! Site rebuilding...");
+      
+      // Start checking build status
+      setTimeout(checkBuildStatus, 2000);
       
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to delete post");
@@ -219,6 +267,8 @@ export default function Admin() {
       loading={loading}
       error={error}
       success={success}
+      buildStatus={buildStatus}
+      dataSource={dataSource}
       onEdit={(post) => {
         setEditingPost(post);
         setIsNewPost(false);
@@ -228,6 +278,7 @@ export default function Admin() {
       onDelete={deletePost}
       onCreate={createNewPost}
       onLogout={handleLogout}
+      onRefresh={() => loadPosts(true)}
     />
   );
 }
