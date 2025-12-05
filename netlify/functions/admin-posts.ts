@@ -1,10 +1,7 @@
 import type { Handler, HandlerEvent } from "@netlify/functions";
-import { readdir, readFile } from "fs/promises";
-import { join } from "path";
-import matter from "gray-matter";
 
-// Note: This function reads from the content directory at BUILD time
-// The data is bundled into the function during Netlify's build process
+// Import the pre-generated blog posts JSON (generated at build time)
+import blogPosts from "./blog-posts.json";
 
 interface BlogPostMeta {
   filename: string;
@@ -17,14 +14,11 @@ interface BlogPostMeta {
   content: string;
 }
 
-const CONTENT_PATH = "content/blog";
-
 // Simple token verification - in production use JWT
 const verifyToken = (authHeader: string | undefined): boolean => {
   if (!authHeader) return false;
   const token = authHeader.replace("Bearer ", "");
   // For now, just check that a token exists (it was issued by login)
-  // In production, use JWT or a database to verify tokens
   return token.length > 0;
 };
 
@@ -42,7 +36,7 @@ const handler: Handler = async (event: HandlerEvent) => {
   // Handle different HTTP methods
   switch (event.httpMethod) {
     case "GET":
-      return await handleGetPosts();
+      return handleGetPosts();
     case "POST":
       return handleCreatePost();
     case "DELETE":
@@ -56,28 +50,21 @@ const handler: Handler = async (event: HandlerEvent) => {
   }
 };
 
-async function handleGetPosts() {
+function handleGetPosts() {
   try {
-    const files = await readdir(CONTENT_PATH);
-    const posts: BlogPostMeta[] = [];
+    // Transform blogPosts to match the expected format
+    const posts: BlogPostMeta[] = (blogPosts as any[]).map((post) => ({
+      filename: `${post.date}-${post.slug}.md`,
+      slug: post.slug,
+      title: post.title,
+      date: post.date,
+      category: post.category,
+      description: post.description,
+      readTime: post.readTime,
+      content: post.content,
+    }));
 
-    for (const file of files) {
-      if (!file.endsWith(".md")) continue;
-      const content = await readFile(join(CONTENT_PATH, file), "utf-8");
-      const { data, content: markdown } = matter(content);
-
-      posts.push({
-        filename: file,
-        slug: data.slug || file.replace(/\.md$/, ""),
-        title: data.title || "Untitled",
-        date: data.date || "",
-        category: data.category || "General",
-        description: data.description || "",
-        readTime: data.readTime || "5 min read",
-        content: markdown,
-      });
-    }
-
+    // Sort by date (newest first)
     posts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
     return {
@@ -86,18 +73,16 @@ async function handleGetPosts() {
       body: JSON.stringify({ posts }),
     };
   } catch (error) {
-    console.error("Error reading posts:", error);
+    console.error("Error loading posts:", error);
     return {
       statusCode: 500,
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ error: "Failed to load posts" }),
+      body: JSON.stringify({ error: "Failed to load posts", details: String(error) }),
     };
   }
 }
 
 function handleCreatePost() {
-  // Netlify Functions can't write to the filesystem
-  // In production, you would integrate with GitHub API or a CMS
   return {
     statusCode: 501,
     headers: { "Content-Type": "application/json" },
@@ -109,7 +94,6 @@ function handleCreatePost() {
 }
 
 function handleDeletePost() {
-  // Netlify Functions can't delete files from the filesystem
   return {
     statusCode: 501,
     headers: { "Content-Type": "application/json" },
