@@ -3,6 +3,12 @@ import { join } from "path";
 import matter from "gray-matter";
 import { marked } from "marked";
 
+// Configure marked to allow HTML passthrough
+marked.setOptions({
+  gfm: true,
+  breaks: false,
+});
+
 const CONTENT_DIR = "./content/blog";
 const OUTPUT_FILE = "./src/lib/blogData.ts";
 

@@ -6,6 +6,7 @@ import Contact from "./pages/Contact";
 import StrategicCommandCenter from "./pages/StrategicCommandCenter";
 import RiskAdvisor from "./pages/RiskAdvisor";
 import ComplianceCopilot from "./pages/ComplianceCopilot";
+import Admin from "./pages/Admin";
 
 export default function App() {
   return (
@@ -17,6 +18,7 @@ export default function App() {
       <Route path="/strategic-command-center" component={StrategicCommandCenter} />
       <Route path="/risk-advisor" component={RiskAdvisor} />
       <Route path="/compliance-copilot" component={ComplianceCopilot} />
+      <Route path="/admin" component={Admin} />
     </Router>
   );
 }
