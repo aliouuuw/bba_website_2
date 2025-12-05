@@ -1,6 +1,23 @@
 [build]
   command = "bun run build"
   publish = "dist"
+  functions = "netlify/functions"
+
+# Redirect API routes to Netlify Functions
+[[redirects]]
+  from = "/api/health"
+  to = "/.netlify/functions/health"
+  status = 200
+
+[[redirects]]
+  from = "/api/admin/login"
+  to = "/.netlify/functions/admin-login"
+  status = 200
+
+[[redirects]]
+  from = "/api/contact"
+  to = "/.netlify/functions/contact"
+  status = 200
 
 # Serve static assets directly
 [[redirects]]
