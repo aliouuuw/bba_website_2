@@ -1,4 +1,5 @@
 /** @jsxImportSource preact */
+import * as preact from "preact";
 import { renderToString } from "preact-render-to-string";
 import { readdir, readFile, mkdir, writeFile } from "fs/promises";
 import { join } from "path";
@@ -20,7 +21,8 @@ const DIST_DIR = "./dist";
 const CONTENT_DIR = "./content/blog";
 
 // HTML template
-function htmlTemplate(content: string, title: string, description: string): string {
+function htmlTemplate(content: string, title: string, description: string, extraStyles: string[] = []): string {
+  const extraStyleLinks = extraStyles.map(href => `  <link rel="stylesheet" href="${href}">`).join('\n');
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,11 +34,12 @@ function htmlTemplate(content: string, title: string, description: string): stri
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/styles.css">
+${extraStyleLinks}
   <link rel="icon" type="image/png" href="/assets/bba_new_logo_transparent.png">
 </head>
 <body>
   <div id="root">${content}</div>
-  <script type="module" src="/src/index.tsx"></script>
+  <script type="module" src="/js/index.js"></script>
 </body>
 </html>`;
 }
@@ -84,18 +87,18 @@ async function prerender() {
   await mkdir(DIST_DIR, { recursive: true });
 
   // Static pages
-  const staticPages = [
+  const staticPages: Array<{ path: string; component: preact.VNode; title: string; description: string; extraStyles?: string[] }> = [
     { path: "index.html", component: <Home />, title: "BBA FinTech | From Data to Decisive Action", description: "AI-Powered Intelligence for Financial Institutions" },
     { path: "contact/index.html", component: <Contact />, title: "Contact Us | BBA FinTech", description: "Get in touch with BBA FinTech" },
     { path: "strategic-command-center/index.html", component: <StrategicCommandCenter />, title: "AI Strategic Command Center | BBA FinTech", description: "Your AI co-pilot for market leadership" },
     { path: "risk-advisor/index.html", component: <RiskAdvisor />, title: "AI Risk Advisor Platform | BBA FinTech", description: "Predict, monitor, and mitigate financial risks" },
     { path: "compliance-copilot/index.html", component: <ComplianceCopilot />, title: "AI Compliance Co-Pilot | BBA FinTech", description: "Turn regulatory burden into strategic advantage" },
-    { path: "admin/index.html", component: <Admin />, title: "Admin | BBA FinTech", description: "Content management dashboard" },
+    { path: "admin/index.html", component: <Admin />, title: "Admin | BBA FinTech", description: "Content management dashboard", extraStyles: ["/admin.css"] },
   ];
 
   for (const page of staticPages) {
     const html = renderToString(page.component);
-    await writeHtmlFile(page.path, htmlTemplate(html, page.title, page.description));
+    await writeHtmlFile(page.path, htmlTemplate(html, page.title, page.description, page.extraStyles));
   }
 
   // Blog index - need to pass posts as props
@@ -127,6 +130,26 @@ async function prerender() {
     await Bun.write(join(DIST_DIR, "assets", file), Bun.file(join(assetsDir, file)));
     console.log(`  ✓ assets/${file}`);
   }
+
+  // Bundle JavaScript for production
+  console.log("\n🔧 Bundling JavaScript...");
+  const result = await Bun.build({
+    entrypoints: ["./src/index.tsx"],
+    outdir: join(DIST_DIR, "js"),
+    minify: true,
+    splitting: true,
+    target: "browser",
+    format: "esm",
+    define: {
+      "process.env.NODE_ENV": '"production"',
+    },
+  });
+
+  if (!result.success) {
+    console.error("Build failed:", result.logs);
+    process.exit(1);
+  }
+  console.log("  ✓ js/index.js");
 
   console.log("\n✅ Prerendering complete!");
 }
