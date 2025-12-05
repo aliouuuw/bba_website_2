@@ -1,0 +1,3 @@
+# Use Preact JSX runtime
+jsx = "react-jsx"
+jsxImportSource = "preact"
