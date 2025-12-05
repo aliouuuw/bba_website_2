@@ -10,6 +10,7 @@ export default function Admin() {
   const [posts, setPosts] = useState<BlogPostMeta[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [editingPost, setEditingPost] = useState<BlogPostMeta | null>(null);
   const [isNewPost, setIsNewPost] = useState(false);
 
@@ -27,6 +28,14 @@ export default function Admin() {
       loadPosts();
     }
   }, [isAuthenticated]);
+
+  // Auto-clear success message
+  useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => setSuccess(""), 8000);
+      return () => clearTimeout(timer);
+    }
+  }, [success]);
 
   const handleLogin = async (password: string) => {
     setLoading(true);
@@ -92,6 +101,8 @@ export default function Admin() {
   const savePost = async (post: BlogPostMeta) => {
     setLoading(true);
     setError("");
+    setSuccess("");
+    
     try {
       const res = await fetch("/api/admin/posts", {
         method: "POST",
@@ -101,10 +112,32 @@ export default function Admin() {
         },
         body: JSON.stringify(post),
       });
-      if (!res.ok) throw new Error("Failed to save post");
-      await loadPosts();
+      
+      const data = await res.json();
+      
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to save post");
+      }
+      
+      // Optimistic update - add/update the post in local state immediately
+      const savedPost = data.post as BlogPostMeta;
+      setPosts(prevPosts => {
+        const existingIndex = prevPosts.findIndex(p => p.slug === savedPost.slug);
+        if (existingIndex >= 0) {
+          // Update existing post
+          const updated = [...prevPosts];
+          updated[existingIndex] = savedPost;
+          return updated;
+        } else {
+          // Add new post at beginning
+          return [savedPost, ...prevPosts];
+        }
+      });
+      
       setEditingPost(null);
       setIsNewPost(false);
+      setSuccess(data.message || "Post saved successfully! Site will rebuild in ~1-2 minutes.");
+      
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to save post");
     } finally {
@@ -113,16 +146,28 @@ export default function Admin() {
   };
 
   const deletePost = async (filename: string) => {
-    if (!confirm("Are you sure you want to delete this post?")) return;
+    if (!confirm("Are you sure you want to delete this post? This will trigger a site rebuild.")) return;
+    
     setLoading(true);
     setError("");
+    setSuccess("");
+    
     try {
       const res = await fetch(`/api/admin/posts?filename=${encodeURIComponent(filename)}`, {
         method: "DELETE",
         headers: getAuthHeaders(),
       });
-      if (!res.ok) throw new Error("Failed to delete post");
-      await loadPosts();
+      
+      const data = await res.json();
+      
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to delete post");
+      }
+      
+      // Optimistic update - remove from local state immediately  
+      setPosts(prevPosts => prevPosts.filter(p => p.filename !== filename));
+      setSuccess(data.message || "Post deleted! Site will rebuild in ~1-2 minutes.");
+      
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to delete post");
     } finally {
@@ -143,6 +188,8 @@ export default function Admin() {
       content: "Start writing your blog post here...\n\n## Introduction\n\nAdd your content.",
     });
     setIsNewPost(true);
+    setError("");
+    setSuccess("");
   };
 
   if (!isAuthenticated) {
@@ -170,9 +217,13 @@ export default function Admin() {
     <AdminDashboard
       posts={posts}
       loading={loading}
+      error={error}
+      success={success}
       onEdit={(post) => {
         setEditingPost(post);
         setIsNewPost(false);
+        setError("");
+        setSuccess("");
       }}
       onDelete={deletePost}
       onCreate={createNewPost}

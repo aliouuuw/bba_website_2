@@ -3,6 +3,8 @@ import { BlogPostMeta } from "../../types";
 interface AdminDashboardProps {
   posts: BlogPostMeta[];
   loading: boolean;
+  error?: string;
+  success?: string;
   onEdit: (post: BlogPostMeta) => void;
   onDelete: (filename: string) => void;
   onCreate: () => void;
@@ -11,7 +13,9 @@ interface AdminDashboardProps {
 
 export default function AdminDashboard({ 
   posts, 
-  loading, 
+  loading,
+  error,
+  success,
   onEdit, 
   onDelete, 
   onCreate, 
@@ -46,10 +50,57 @@ export default function AdminDashboard({
         </div>
       </header>
 
+      {/* Success Message */}
+      {success && (
+        <div style={{
+          background: 'rgba(94, 234, 212, 0.15)',
+          border: '1px solid var(--color-teal)',
+          color: 'var(--color-navy)',
+          padding: '1rem 1.5rem',
+          margin: '1rem 2rem 0',
+          borderRadius: '8px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.75rem'
+        }}>
+          <span style={{ fontSize: '1.25rem' }}>✓</span>
+          <div>
+            <strong>{success}</strong>
+            <div style={{ fontSize: '0.85rem', opacity: 0.8, marginTop: '0.25rem' }}>
+              Refresh the blog page after the rebuild completes to see your changes.
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Error Message */}
+      {error && (
+        <div style={{
+          background: 'rgba(239, 68, 68, 0.1)',
+          border: '1px solid #ef4444',
+          color: '#dc2626',
+          padding: '1rem 1.5rem',
+          margin: '1rem 2rem 0',
+          borderRadius: '8px',
+        }}>
+          <strong>Error:</strong> {error}
+        </div>
+      )}
+
       <main className="admin-content">
         {loading ? (
           <div style={{ textAlign: 'center', padding: '4rem', color: 'var(--color-periwinkle)' }}>
-            Loading content...
+            <div style={{ 
+              display: 'inline-block',
+              width: '24px',
+              height: '24px',
+              border: '3px solid rgba(94, 234, 212, 0.3)',
+              borderTopColor: 'var(--color-teal)',
+              borderRadius: '50%',
+              animation: 'spin 1s linear infinite',
+              marginBottom: '1rem'
+            }} />
+            <div>Loading content...</div>
           </div>
         ) : posts.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '4rem', color: 'var(--color-periwinkle)' }}>
@@ -58,7 +109,7 @@ export default function AdminDashboard({
         ) : (
           <div className="post-grid">
             {posts.map((post) => (
-              <div key={post.filename} className="post-card">
+              <div key={post.filename || post.slug} className="post-card">
                 <h3 className="post-card-title">{post.title}</h3>
                 <div className="post-card-meta">
                   {post.date} • {post.category}
@@ -79,6 +130,12 @@ export default function AdminDashboard({
           </div>
         )}
       </main>
+
+      <style>{`
+        @keyframes spin {
+          to { transform: rotate(360deg); }
+        }
+      `}</style>
     </div>
   );
 }
