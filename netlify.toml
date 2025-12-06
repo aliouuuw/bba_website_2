@@ -1,6 +1,6 @@
 [build]
   base = "solidjs_bun_version"
-  command = "bun install && bun run build"
+  command = "bun install && bun run generate-blog && bun run build"
   publish = "dist"
   functions = ".netlify/functions-internal"
 

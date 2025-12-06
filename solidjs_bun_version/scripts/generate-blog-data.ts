@@ -74,11 +74,6 @@ export function getPostBySlug(slug: string): BlogPost | undefined {
 
   await writeFile(OUTPUT_FILE, output);
   console.log(`\n✅ Generated ${OUTPUT_FILE} with ${posts.length} posts`);
-
-  // Also generate JSON for Netlify Functions
-  const jsonOutput = JSON.stringify(posts, null, 2);
-  await writeFile("./netlify/functions/blog-posts.json", jsonOutput);
-  console.log(`✅ Generated ./netlify/functions/blog-posts.json`);
 }
 
 generateBlogData().catch(console.error);
