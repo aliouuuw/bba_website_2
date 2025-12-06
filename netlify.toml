@@ -1,33 +1,10 @@
 [build]
-  command = "bun run build"
-  publish = "dist"
-  functions = "netlify/functions"
+  base = "solidjs_bun_version"
+  command = "bun install && bun run build"
+  publish = ".output/public"
 
-# Redirect API routes to Netlify Functions
-[[redirects]]
-  from = "/api/health"
-  to = "/.netlify/functions/health"
-  status = 200
-
-[[redirects]]
-  from = "/api/admin/login"
-  to = "/.netlify/functions/admin-login"
-  status = 200
-
-[[redirects]]
-  from = "/api/admin/posts"
-  to = "/.netlify/functions/admin-posts"
-  status = 200
-
-[[redirects]]
-  from = "/api/contact"
-  to = "/.netlify/functions/contact"
-  status = 200
-
-[[redirects]]
-  from = "/api/admin/build-status"
-  to = "/.netlify/functions/build-status"
-  status = 200
+[build.environment]
+  NODE_VERSION = "22"
 
 # Serve static assets directly
 [[redirects]]
@@ -35,19 +12,15 @@
   to = "/assets/:splat"
   status = 200
 
+# Admin portal - serve Decap CMS
 [[redirects]]
-  from = "/js/*"
-  to = "/js/:splat"
+  from = "/admin"
+  to = "/admin/index.html"
   status = 200
 
 [[redirects]]
-  from = "/styles.css"
-  to = "/styles.css"
-  status = 200
-
-[[redirects]]
-  from = "/admin.css"
-  to = "/admin.css"
+  from = "/admin/*"
+  to = "/admin/:splat"
   status = 200
 
 # Handle SPA routing for client-side navigation - this should be LAST
@@ -64,7 +37,7 @@
     Cache-Control = "public, max-age=31536000, immutable"
 
 [[headers]]
-  for = "/js/*"
+  for = "/_build/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
