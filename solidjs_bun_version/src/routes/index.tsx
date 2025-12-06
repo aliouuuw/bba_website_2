@@ -1,19 +1,29 @@
-import { Title } from "@solidjs/meta";
-import Counter from "~/components/Counter";
+import Header from "~/components/Header";
+import Hero from "~/components/Hero";
+import Intro from "~/components/Intro";
+import Platform from "~/components/Platform";
+import PainPoints from "~/components/PainPoints";
+import Clients from "~/components/Clients";
+import Solutions from "~/components/Solutions";
+import About from "~/components/About";
+import CTA from "~/components/CTA";
+import Footer from "~/components/Footer";
 
 export default function Home() {
   return (
-    <main>
-      <Title>Hello World</Title>
-      <h1>Hello world!</h1>
-      <Counter />
-      <p>
-        Visit{" "}
-        <a href="https://start.solidjs.com" target="_blank">
-          start.solidjs.com
-        </a>{" "}
-        to learn how to build SolidStart apps.
-      </p>
-    </main>
+    <>
+      <Header />
+      <main>
+        <Hero />
+        <Intro />
+        <Platform />
+        <PainPoints />
+        <Clients />
+        <Solutions />
+        <About />
+        <CTA />
+      </main>
+      <Footer />
+    </>
   );
 }
