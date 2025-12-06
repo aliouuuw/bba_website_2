@@ -1,34 +1,11 @@
 [build]
   base = "solidjs_bun_version"
   command = "bun install && bun run build"
-  publish = ".output/public"
+  publish = "dist"
+  functions = ".netlify/functions-internal"
 
 [build.environment]
   NODE_VERSION = "22"
-
-# Serve static assets directly
-[[redirects]]
-  from = "/assets/*"
-  to = "/assets/:splat"
-  status = 200
-
-# Admin portal - serve Decap CMS
-[[redirects]]
-  from = "/admin"
-  to = "/admin/index.html"
-  status = 200
-
-[[redirects]]
-  from = "/admin/*"
-  to = "/admin/:splat"
-  status = 200
-
-# Handle SPA routing for client-side navigation - this should be LAST
-# This catches any route that doesn't match a static file
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
 
 # Headers for caching
 [[headers]]
