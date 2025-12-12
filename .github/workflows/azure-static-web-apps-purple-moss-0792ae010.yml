@@ -37,6 +37,24 @@ jobs:
         working-directory: solidjs_bun_version
         run: bun run build
 
+      # SolidStart (Nitro) azure-swa output needs a couple of tweaks so Azure Functions
+      # is detected correctly by SWA and loads ESM entrypoints.
+      - name: Prepare Azure Functions output (SSR)
+        working-directory: solidjs_bun_version
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # Rename the generated function folder to "server" so SWA SSR rewrite to /api/server works
+          if [ -d ".output/server/functions" ] && [ ! -d ".output/server/server" ]; then
+            mv .output/server/functions .output/server/server
+          fi
+
+          # Ensure Azure Functions loads the ESM entrypoint (defaults to index.js otherwise)
+          if [ -f ".output/server/server/function.json" ]; then
+            node -e "const fs=require('fs'); const p='.output/server/server/function.json'; const j=JSON.parse(fs.readFileSync(p,'utf8')); if(!j.scriptFile) j.scriptFile='index.mjs'; fs.writeFileSync(p, JSON.stringify(j, null, 2));"
+          fi
+
       - name: Deploy to Azure Static Web Apps
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1

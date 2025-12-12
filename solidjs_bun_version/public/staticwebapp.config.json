@@ -5,14 +5,35 @@
       "redirect": "/"
     },
     {
-      "route": "/",
-      "rewrite": "/api/functions"
+      "route": "/assets/*",
+      "headers": {
+        "Cache-Control": "public, max-age=31536000, immutable"
+      }
+    },
+    {
+      "route": "/_build/*",
+      "headers": {
+        "Cache-Control": "public, max-age=31536000, immutable"
+      }
     }
   ],
   "platform": {
     "apiRuntime": "node:20"
   },
   "navigationFallback": {
-    "rewrite": "/api/functions"
+    "rewrite": "/api/server",
+    "exclude": [
+      "/assets/*",
+      "/_build/*",
+      "/*.css",
+      "/*.js",
+      "/*.ico",
+      "/*.png",
+      "/*.jpg",
+      "/*.svg",
+      "/*.txt",
+      "/*.xml",
+      "/*.json"
+    ]
   }
 }
