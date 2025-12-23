@@ -11,7 +11,8 @@ function formatDate(dateStr: string): string {
 
 export default function BlogPost() {
   const params = useParams();
-  const post = () => getPostBySlug(params.slug);
+  const slug = () => params.slug ?? "";
+  const post = () => getPostBySlug(slug());
 
   const displayPost = () => {
     const p = post();
@@ -23,6 +24,16 @@ export default function BlogPost() {
   };
 
   const currentPost = displayPost();
+
+  const shareArticle = () => {
+    if (typeof window === "undefined") return;
+    const url = window.location.href;
+    if (navigator.share) {
+      navigator.share({ title: currentPost.title, url }).catch(() => {});
+    } else if (navigator.clipboard) {
+      navigator.clipboard.writeText(url).catch(() => {});
+    }
+  };
 
   if (!currentPost) {
     return (
@@ -69,8 +80,15 @@ export default function BlogPost() {
         <section class="cta" style={{ background: "var(--color-navy)" }}>
           <div class="container">
             <div class="cta-box">
-              <h2 style={{ "margin-bottom": "2rem", color: "white" }}>READY TO UPGRADE YOUR RISK MANAGEMENT?</h2>
-              <a href="/risk-advisor" class="btn" style={{ background: "var(--color-teal)", color: "var(--color-navy)" }}>Explore Risk Advisor</a>
+              <h2 style={{ "margin-bottom": "1.5rem", color: "white" }}>SUBSCRIBE FOR AI-FINANCE INSIGHTS</h2>
+              <div style={{ display: "flex", "flex-wrap": "wrap", gap: "1rem", "justify-content": "center" }}>
+                <a href="/contact?topic=subscribe" class="btn" style={{ background: "var(--color-teal)", color: "var(--color-navy)" }}>
+                  Subscribe
+                </a>
+                <button type="button" class="btn btn-outline" style={{ color: "white", "box-shadow": "inset 0 0 0 2px white" }} onClick={shareArticle}>
+                  Share this Article
+                </button>
+              </div>
             </div>
           </div>
         </section>

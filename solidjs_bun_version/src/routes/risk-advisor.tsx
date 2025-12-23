@@ -1,6 +1,7 @@
 import { Title } from "@solidjs/meta";
 import Header from "~/components/Header";
 import Footer from "~/components/Footer";
+import Testimonials from "~/components/Testimonials";
 
 const features = [
   { icon: "01", title: "Early Warning System", description: "AI-driven alerts that predict potential risks before they materialize, giving you time to act." },
@@ -30,8 +31,8 @@ export default function RiskAdvisor() {
               <h1>AI RISK <br /><span class="text-gradient">ADVISOR PLATFORM</span></h1>
               <p>Predict, monitor, and mitigate financial and non-financial risks before they impact your business.</p>
               <div style={{ display: "flex", gap: "1rem", "flex-wrap": "wrap" }}>
-                <a href="/contact" class="btn" style={{ background: "var(--color-teal)", color: "var(--color-navy)" }}>Contact Sales</a>
-                <a href="/contact" class="btn btn-outline" style={{ color: "white", "box-shadow": "inset 0 0 0 2px white" }}>Request Demo</a>
+                <a href="/contact" class="btn" style={{ background: "var(--color-teal)", color: "var(--color-navy)" }}>Request Your 72-Hour Portfolio Diagnostic</a>
+                <a href="#" class="btn btn-outline" style={{ color: "white", "box-shadow": "inset 0 0 0 2px white" }}>View a Sample Risk Audit Report</a>
               </div>
             </div>
             <div class="hero-visual">
@@ -89,6 +90,8 @@ export default function RiskAdvisor() {
           </div>
         </section>
 
+        <Testimonials ids={[3]} />
+
         <section class="target-audience" style={{ padding: "6rem 0", background: "var(--color-navy)", color: "white" }}>
           <div class="container">
             <div style={{ "text-align": "center", "margin-bottom": "4rem" }}><h2 style={{ color: "white" }}>WHO IT'S FOR</h2></div>
@@ -107,7 +110,10 @@ export default function RiskAdvisor() {
           <div class="container">
             <div class="cta-box">
               <h2 style={{ "margin-bottom": "2rem" }}>READY TO TURN DATA INTO DECISIVE ADVANTAGE?</h2>
-              <a href="/contact" class="btn" style={{ background: "var(--color-navy)", color: "white" }}>Contact Sales</a>
+              <div style={{ display: "flex", gap: "1rem", "flex-wrap": "wrap", "justify-content": "center" }}>
+                <a href="/contact" class="btn" style={{ background: "var(--color-navy)", color: "white" }}>Request Your 72-Hour Portfolio Diagnostic</a>
+                <a href="#" class="btn btn-outline" style={{ color: "var(--color-navy)", "box-shadow": "inset 0 0 0 2px var(--color-navy)" }}>View a Sample Risk Audit Report</a>
+              </div>
             </div>
           </div>
         </section>

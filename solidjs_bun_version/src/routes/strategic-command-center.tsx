@@ -1,6 +1,7 @@
 import { Title } from "@solidjs/meta";
 import Header from "~/components/Header";
 import Footer from "~/components/Footer";
+import Testimonials from "~/components/Testimonials";
 
 const features = [
   { icon: "01", title: "AI-Generated Strategic Plans", description: "Receive data-backed initiatives tailored to your business objectives, automatically generated from market conditions." },
@@ -33,8 +34,8 @@ export default function StrategicCommandCenter() {
               <h1>AI STRATEGIC <br /><span class="text-gradient">COMMAND CENTER</span></h1>
               <p>Your AI co-pilot for market leadership. See where you stand—and where to go next with predictive insights and automated strategy generation.</p>
               <div style={{ display: "flex", gap: "1rem", "flex-wrap": "wrap" }}>
-                <a href="/contact" class="btn" style={{ background: "var(--color-teal)", color: "var(--color-navy)" }}>Contact Sales</a>
-                <a href="/contact" class="btn btn-outline" style={{ color: "white", "box-shadow": "inset 0 0 0 2px white" }}>Request Demo</a>
+                <a href="/contact" class="btn" style={{ background: "var(--color-teal)", color: "var(--color-navy)" }}>Get Your 48-Hour Competitive Analysis</a>
+                <a href="#" class="btn btn-outline" style={{ color: "white", "box-shadow": "inset 0 0 0 2px white" }}>Download the Strategy Leader's Playbook</a>
               </div>
             </div>
             <div class="hero-visual">
@@ -91,6 +92,8 @@ export default function StrategicCommandCenter() {
           </div>
         </section>
 
+        <Testimonials ids={[1]} />
+
         <section class="target-audience" style={{ padding: "6rem 0", background: "var(--color-navy)", color: "white" }}>
           <div class="container">
             <div style={{ "text-align": "center", "margin-bottom": "4rem" }}><h2 style={{ color: "white" }}>WHO IT'S FOR</h2></div>
@@ -109,7 +112,10 @@ export default function StrategicCommandCenter() {
           <div class="container">
             <div class="cta-box">
               <h2 style={{ "margin-bottom": "2rem" }}>READY TO TURN DATA INTO DECISIVE ADVANTAGE?</h2>
-              <a href="/contact" class="btn" style={{ background: "var(--color-navy)", color: "white" }}>Contact Sales</a>
+              <div style={{ display: "flex", gap: "1rem", "flex-wrap": "wrap", "justify-content": "center" }}>
+                <a href="/contact" class="btn" style={{ background: "var(--color-navy)", color: "white" }}>Get Your 48-Hour Competitive Analysis</a>
+                <a href="#" class="btn btn-outline" style={{ color: "var(--color-navy)", "box-shadow": "inset 0 0 0 2px var(--color-navy)" }}>Download the Strategy Leader's Playbook</a>
+              </div>
             </div>
           </div>
         </section>

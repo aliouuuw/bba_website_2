@@ -17,6 +17,16 @@ function formatDate(dateStr: string): string {
 export default function Blog() {
   const posts = getAllPosts();
 
+  const sharePage = () => {
+    if (typeof window === "undefined") return;
+    const url = window.location.href;
+    if (navigator.share) {
+      navigator.share({ title: "BBA Blog - AI Finance Insights", url }).catch(() => {});
+    } else if (navigator.clipboard) {
+      navigator.clipboard.writeText(url).catch(() => {});
+    }
+  };
+
   return (
     <>
       <Title>Blog - BBA FinTech</Title>
@@ -40,7 +50,7 @@ export default function Blog() {
           <div class="container">
             <div class="blog-grid">
               {posts.map((post, i) => (
-                <article class="blog-card" key={post.slug}>
+                <article class="blog-card" data-key={post.slug}>
                   <div class="blog-image" style={{ background: gradients[i % gradients.length] }}></div>
                   <div class="blog-content">
                     <div class="blog-meta font-mono">{formatDate(post.date)} • {post.category}</div>
@@ -57,11 +67,15 @@ export default function Blog() {
         <section class="cta" style={{ background: "var(--color-navy)" }}>
           <div class="container">
             <div class="cta-box">
-              <h2 style={{ "margin-bottom": "2rem", color: "white" }}>SUBSCRIBE TO OUR NEWSLETTER</h2>
-              <form style={{ "max-width": "400px", margin: "0 auto", display: "flex", gap: "1rem" }}>
-                <input type="email" placeholder="Enter your email" style={{ flex: 1, padding: "1rem", "border-radius": "4px", border: "none" }} />
-                <button class="btn" style={{ background: "var(--color-teal)", color: "var(--color-navy)" }}>Subscribe</button>
-              </form>
+              <h2 style={{ "margin-bottom": "1.5rem", color: "white" }}>SUBSCRIBE FOR AI-FINANCE INSIGHTS</h2>
+              <div style={{ display: "flex", "flex-wrap": "wrap", gap: "1rem", "justify-content": "center" }}>
+                <a href="/contact?topic=subscribe" class="btn" style={{ background: "var(--color-teal)", color: "var(--color-navy)" }}>
+                  Subscribe
+                </a>
+                <button type="button" class="btn btn-outline" style={{ color: "white", "box-shadow": "inset 0 0 0 2px white" }} onClick={sharePage}>
+                  Share this Page
+                </button>
+              </div>
             </div>
           </div>
         </section>

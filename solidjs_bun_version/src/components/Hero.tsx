@@ -42,11 +42,11 @@ export default function Hero() {
             Move beyond dashboards into action. Get strategic recommendations, proactive risk alerts, and automated compliance—powered by AI.
           </p>
           <div class="reveal-slide" style={{ display: "flex", gap: "1rem", "flex-wrap": "wrap" }}>
-            <a href="#solutions" class="btn" style={{ background: "var(--color-teal)", color: "var(--color-navy)" }}>
-              Explore AI Solutions
+            <a href="#contact" class="btn" style={{ background: "var(--color-teal)", color: "var(--color-navy)" }}>
+              Unlock Your Free Strategy Assessment
             </a>
-            <a href="#contact" class="btn btn-outline" style={{ color: "white", "box-shadow": "inset 0 0 0 2px white" }}>
-              Book a Free Demo
+            <a href="https://youtu.be/LSYX7cMhsYI?si=dqiD97aEZ2c1L6CK" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style={{ color: "white", "box-shadow": "inset 0 0 0 2px white" }}>
+              Watch 3-Minute Overview
             </a>
           </div>
         </div>

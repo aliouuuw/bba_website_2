@@ -33,8 +33,8 @@ export default function ComplianceCopilot() {
               <h1>AI COMPLIANCE <br /><span class="text-gradient">CO-PILOT</span></h1>
               <p>Turn regulatory burden into strategic advantage. From data to regulator-ready submissions.</p>
               <div style={{ display: "flex", gap: "1rem", "flex-wrap": "wrap" }}>
-                <a href="/contact" class="btn" style={{ background: "var(--color-teal)", color: "var(--color-navy)" }}>Contact Sales</a>
-                <a href="/contact" class="btn btn-outline" style={{ color: "white", "box-shadow": "inset 0 0 0 2px white" }}>Request Demo</a>
+                <a href="/contact" class="btn" style={{ background: "var(--color-teal)", color: "var(--color-navy)" }}>See a Live Compliance Workflow Demo</a>
+                <a href="#" class="btn btn-outline" style={{ color: "white", "box-shadow": "inset 0 0 0 2px white" }}>Access Our RegTech Template Library</a>
               </div>
             </div>
             <div class="hero-visual">
@@ -119,7 +119,10 @@ export default function ComplianceCopilot() {
           <div class="container">
             <div class="cta-box">
               <h2 style={{ "margin-bottom": "2rem" }}>READY TO TURN DATA INTO DECISIVE ADVANTAGE?</h2>
-              <a href="/contact" class="btn" style={{ background: "var(--color-navy)", color: "white" }}>Contact Sales</a>
+              <div style={{ display: "flex", gap: "1rem", "flex-wrap": "wrap", "justify-content": "center" }}>
+                <a href="/contact" class="btn" style={{ background: "var(--color-navy)", color: "white" }}>See a Live Compliance Workflow Demo</a>
+                <a href="#" class="btn btn-outline" style={{ color: "var(--color-navy)", "box-shadow": "inset 0 0 0 2px var(--color-navy)" }}>Access Our RegTech Template Library</a>
+              </div>
             </div>
           </div>
         </section>
