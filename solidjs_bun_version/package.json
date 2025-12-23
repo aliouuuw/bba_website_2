@@ -5,7 +5,8 @@
     "dev": "vinxi dev",
     "build": "vinxi build",
     "start": "vinxi start",
-    "generate-blog": "bun run scripts/generate-blog-data.ts"
+    "generate-blog": "bun run scripts/generate-blog-data.ts",
+    "typecheck": "bun x tsc --noEmit"
   },
   "dependencies": {
     "@solidjs/meta": "^0.29.4",

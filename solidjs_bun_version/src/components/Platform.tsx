@@ -10,7 +10,7 @@ export default function Platform() {
       <div class="container">
         <div class="feature-grid">
           {features.map((feature, index) => (
-            <div class="feature-card reveal-up" style={{ "transition-delay": `${index * 0.1}s` }} key={index}>
+            <div class="feature-card reveal-up" style={{ "transition-delay": `${index * 0.1}s` }}>
               <div class="icon">{feature.icon}</div>
               <h3>{feature.title}</h3>
               <p>{feature.description}</p>

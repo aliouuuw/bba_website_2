@@ -41,7 +41,7 @@ export default function ComplianceCopilot() {
               <div class="hero-card-main" style={{ display: "flex", "align-items": "center", "justify-content": "center", padding: "3rem" }}>
                 <div style={{ width: "100%", "max-width": "280px" }}>
                   {[1, 2, 3].map((i) => (
-                    <div key={i} style={{ display: "flex", "align-items": "center", gap: "1rem", "margin-bottom": "1.5rem" }}>
+                    <div style={{ display: "flex", "align-items": "center", gap: "1rem", "margin-bottom": "1.5rem" }}>
                       <div style={{ width: "24px", height: "24px", border: "2px solid var(--color-teal)", "border-radius": "4px", display: "flex", "align-items": "center", "justify-content": "center" }}>
                         <svg width="16" height="16" viewBox="0 0 16 16"><path d="M3 8 L6 11 L13 4" stroke="var(--color-teal)" stroke-width="2" fill="none" stroke-linecap="round" /></svg>
                       </div>
@@ -90,12 +90,12 @@ export default function ComplianceCopilot() {
             </div>
             <div class="feature-grid">
               {features.slice(0, 3).map((f, i) => (
-                <div class="feature-card" key={i}><div class="icon">{f.icon}</div><h3>{f.title}</h3><p>{f.description}</p></div>
+                <div class="feature-card"><div class="icon">{f.icon}</div><h3>{f.title}</h3><p>{f.description}</p></div>
               ))}
             </div>
             <div class="feature-grid" style={{ "margin-top": "2rem" }}>
               {features.slice(3).map((f, i) => (
-                <div class="feature-card" key={i}><div class="icon">{f.icon}</div><h3>{f.title}</h3><p>{f.description}</p></div>
+                <div class="feature-card"><div class="icon">{f.icon}</div><h3>{f.title}</h3><p>{f.description}</p></div>
               ))}
             </div>
           </div>
@@ -106,7 +106,7 @@ export default function ComplianceCopilot() {
             <div style={{ "text-align": "center", "margin-bottom": "4rem" }}><h2 style={{ color: "white" }}>WHO IT'S FOR</h2></div>
             <div style={{ display: "flex", "justify-content": "center", gap: "4rem", "flex-wrap": "wrap" }}>
               {audiences.map((a, i) => (
-                <div key={i} style={{ "text-align": "center", "max-width": "300px" }}>
+                <div style={{ "text-align": "center", "max-width": "300px" }}>
                   <div style={{ "font-size": "2rem", "margin-bottom": "1rem", color: a.color }}>{a.title}</div>
                   <p style={{ color: "rgba(255,255,255,0.8)" }}>{a.description}</p>
                 </div>

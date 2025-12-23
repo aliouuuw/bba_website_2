@@ -117,7 +117,7 @@ function ComplianceVisual() {
     <div style={{ display: "flex", "align-items": "center", "justify-content": "center", height: "100%", padding: "3rem" }}>
       <div style={{ width: "100%", "max-width": "280px" }}>
         {[1, 2, 3].map((i) => (
-          <div key={i} style={{ display: "flex", "align-items": "center", gap: "1rem", "margin-bottom": "1.5rem" }}>
+          <div style={{ display: "flex", "align-items": "center", gap: "1rem", "margin-bottom": "1.5rem" }}>
             <div style={{ width: "24px", height: "24px", border: "2px solid var(--color-teal)", "border-radius": "4px", display: "flex", "align-items": "center", "justify-content": "center" }}>
               <svg width="16" height="16" viewBox="0 0 16 16">
                 <path d="M3 8 L6 11 L13 4" stroke="var(--color-teal)" stroke-width="2" fill="none" stroke-linecap="round" />

@@ -80,7 +80,7 @@ export default function RiskAdvisor() {
             </div>
             <div class="feature-grid">
               {features.map((f, i) => (
-                <div class="feature-card" key={i}><div class="icon">{f.icon}</div><h3>{f.title}</h3><p>{f.description}</p></div>
+                <div class="feature-card"><div class="icon">{f.icon}</div><h3>{f.title}</h3><p>{f.description}</p></div>
               ))}
             </div>
             <div style={{ "margin-top": "4rem", background: "var(--color-navy)", padding: "2rem", color: "white", "border-radius": "8px" }}>
@@ -97,7 +97,7 @@ export default function RiskAdvisor() {
             <div style={{ "text-align": "center", "margin-bottom": "4rem" }}><h2 style={{ color: "white" }}>WHO IT'S FOR</h2></div>
             <div style={{ display: "flex", "justify-content": "center", gap: "4rem", "flex-wrap": "wrap" }}>
               {audiences.map((a, i) => (
-                <div key={i} style={{ "text-align": "center", "max-width": "300px" }}>
+                <div style={{ "text-align": "center", "max-width": "300px" }}>
                   <div style={{ "font-size": "2rem", "margin-bottom": "1rem", color: a.color }}>{a.title}</div>
                   <p style={{ color: "rgba(255,255,255,0.8)" }}>{a.description}</p>
                 </div>

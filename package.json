@@ -8,7 +8,7 @@
     "build": "cd solidjs_bun_version && bun run build",
     "start": "cd solidjs_bun_version && bun run start",
     "generate-blog": "cd solidjs_bun_version && bun run generate-blog",
-    "typecheck": "cd solidjs_bun_version && tsc --noEmit"
+    "typecheck": "cd solidjs_bun_version && bun x tsc --noEmit"
   },
   "devDependencies": {
     "@types/bun": "^1.3.3",
