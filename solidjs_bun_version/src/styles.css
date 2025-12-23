@@ -493,7 +493,6 @@ section {
   padding: var(--space-xl) 0;
   background: var(--color-navy);
   color: var(--color-white);
-  clip-path: var(--clip-diagonal-reverse);
   margin-top: -5%;
   padding-top: 15%;
 }

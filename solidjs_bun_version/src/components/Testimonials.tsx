@@ -27,7 +27,7 @@ export default function Testimonials(props: { ids?: number[] }) {
   };
 
   return (
-    <section class="testimonials" style={{ padding: "5rem 0", background: "linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)" }}>
+    <section class="testimonials" style={{ "padding-top": "2rem", "padding-bottom": "8rem", background: "linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)" }}>
       <div class="container">
         <div style={{ "text-align": "center", "margin-bottom": "4rem" }}>
           <p style={{ "font-size": "0.875rem", color: "#64748B", "margin-bottom": "1rem", "text-transform": "uppercase", "letter-spacing": "0.05em", "font-weight": "600" }}>
