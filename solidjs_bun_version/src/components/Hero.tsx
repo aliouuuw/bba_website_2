@@ -1,8 +1,10 @@
 import { createSignal, onMount } from "solid-js";
+import { useAnchorNavigation } from "~/lib/navigation";
 
 export default function Hero() {
   const [accuracy, setAccuracy] = createSignal(0);
   const [savings, setSavings] = createSignal(0);
+  const { navigateToAnchor } = useAnchorNavigation();
 
   onMount(() => {
     const duration = 1500;
@@ -42,7 +44,7 @@ export default function Hero() {
             Move beyond dashboards into action. Get strategic recommendations, proactive risk alerts, and automated compliance—powered by AI.
           </p>
           <div class="reveal-slide" style={{ display: "flex", gap: "1rem", "flex-wrap": "wrap" }}>
-            <a href="#contact" class="btn" style={{ background: "var(--color-teal)", color: "var(--color-navy)" }}>
+            <a href="#contact" class="btn" style={{ background: "var(--color-teal)", color: "var(--color-navy)" }} onClick={(e) => { e.preventDefault(); navigateToAnchor("#contact"); }}>
               Unlock Your Free Strategy Assessment
             </a>
             <a href="https://youtu.be/LSYX7cMhsYI?si=dqiD97aEZ2c1L6CK" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style={{ color: "white", "box-shadow": "inset 0 0 0 2px white" }}>
