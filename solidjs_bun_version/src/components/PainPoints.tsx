@@ -1,3 +1,25 @@
+import { createSignal } from "solid-js";
+
+function ExpandableItem(props: { title: string; children: any }) {
+  const [isOpen, setIsOpen] = createSignal(false);
+
+  return (
+    <div class="expandable-item">
+      <button
+        class="expandable-header"
+        onClick={() => setIsOpen(!isOpen())}
+        aria-expanded={isOpen()}
+      >
+        <span class="expandable-title">{props.title}</span>
+        <span class="expandable-icon" classList={{ open: isOpen() }}>
+          ▼
+        </span>
+      </button>
+      {isOpen() && <div class="expandable-content">{props.children}</div>}
+    </div>
+  );
+}
+
 export default function PainPoints() {
   return (
     <section class="pain-points">
@@ -9,8 +31,7 @@ export default function PainPoints() {
               BBA FinTech tackles core financial sector challenges with advanced advisory and modeling solutions, transforming data into decisive action and measurable business impact.
             </p>
 
-            <div class="pain-item">
-              <h4>🚨 1. INEFFICIENCY & PROCESS GAPS</h4>
+            <ExpandableItem title="🚨 1. INEFFICIENCY & PROCESS GAPS">
               <p style={{ "margin-bottom": "0.75rem" }}>
                 <strong>The Problem:</strong> Are you still waiting days for reports that are outdated the moment they're printed? Manual reporting, clunky models, and disconnected systems don't just slow decisions—they cost money and opportunity.
               </p>
@@ -35,10 +56,9 @@ export default function PainPoints() {
                 <li>⚡ Reporting Cycle Time Reduced: ~65% faster delivery</li>
                 <li>💰 Annual Savings: $1.8M in process costs and optimized decisions</li>
               </ul>
-            </div>
+            </ExpandableItem>
 
-            <div class="pain-item">
-              <h4>🔍 2. POOR DATA GOVERNANCE & CONTROL</h4>
+            <ExpandableItem title="🔍 2. POOR DATA GOVERNANCE & CONTROL">
               <p style={{ "margin-bottom": "0.75rem" }}>
                 <strong>The Problem:</strong> When the regulator asks for data lineage, does your team dread the costly scavenger hunt? Siloed, inconsistent data without clear audit trails erodes trust and complicates compliance.
               </p>
@@ -64,10 +84,9 @@ export default function PainPoints() {
                 <li>✅ Audit Preparation Time: Reduced from 12 weeks to 10 days</li>
                 <li>✅ Regulatory Penalties Avoided: $500K in potential fines eliminated</li>
               </ul>
-            </div>
+            </ExpandableItem>
 
-            <div class="pain-item">
-              <h4>⚠️ 3. ESCALATING RISK & COMPLIANCE BURDENS</h4>
+            <ExpandableItem title="⚠️ 3. ESCALATING RISK & COMPLIANCE BURDENS">
               <p style={{ "margin-bottom": "0.75rem" }}>
                 <strong>The Problem:</strong> Are you managing risk by looking in the rearview mirror? Reactive, manual risk management leads to regulatory exposure and unexpected losses.
               </p>
@@ -93,7 +112,7 @@ export default function PainPoints() {
                 <li>📈 Capital Efficiency: Regulatory requirements optimized by 15%</li>
                 <li>🤝 Stakeholder Trust: Enhanced through reliable, transparent reporting</li>
               </ul>
-            </div>
+            </ExpandableItem>
 
             <div class="pain-item" style={{ "margin-top": "2rem", "padding-top": "2rem", "border-top": "1px solid var(--color-navy)" }}>
               <h3 style={{ color: "var(--color-navy)", "margin-bottom": "1rem" }}>FROM PAIN POINTS TO PROVEN OUTCOMES</h3>
