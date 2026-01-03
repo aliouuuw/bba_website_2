@@ -19,6 +19,14 @@ export default function Contact() {
       if (res.ok) {
         setStatus("success");
         setFormData({ name: "", email: "", company: "", message: "", partnership: false });
+        
+        // Trigger download
+        const link = document.createElement("a");
+        link.href = "/AI_Powered_Strategy_Playbook.pdf";
+        link.download = "AI_Powered_Strategy_Playbook.pdf";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
       } else {
         setStatus("error");
       }
@@ -91,7 +99,15 @@ export default function Contact() {
                   <button type="submit" class="btn" style={{ width: "100%", "margin-top": "1rem" }} disabled={status() === "loading"}>
                     {status() === "loading" ? "Sending..." : "Send Message"}
                   </button>
-                  {status() === "success" && <p style={{ color: "var(--color-teal)", "margin-top": "1rem" }}>Message sent successfully!</p>}
+                  {status() === "success" && (
+                    <div style={{ "margin-top": "1rem" }}>
+                      <p style={{ color: "var(--color-teal)" }}>Message sent successfully!</p>
+                      <p style={{ "font-size": "0.875rem", color: "var(--color-navy)", "margin-top": "0.5rem" }}>
+                        Your download of the <strong>AI Powered Strategy Playbook</strong> should start automatically. 
+                        If it doesn't, <a href="/AI_Powered_Strategy_Playbook.pdf" download="AI_Powered_Strategy_Playbook.pdf" style={{ color: "var(--color-teal)", "text-decoration": "underline" }}>click here to download manually</a>.
+                      </p>
+                    </div>
+                  )}
                   {status() === "error" && <p style={{ color: "#F43F5E", "margin-top": "1rem" }}>Failed to send. Please try again.</p>}
                 </form>
               </div>
