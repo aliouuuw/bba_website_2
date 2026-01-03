@@ -68,12 +68,12 @@ export default function Hero() {
                 </div>
                 <div style={{ "margin-top": "3rem" }}>
                   <div style={{ "font-family": "var(--font-mono)", "font-size": "0.75rem", color: "rgba(255,255,255,0.6)", "margin-bottom": "0.5rem" }}>
-                    RISK MITIGATION
+                    AVG. PROCESS SAVINGS
                   </div>
                   <div style={{ "font-size": "2.5rem", "font-weight": "700", color: "var(--color-lavender)" }}>
-                    +${savings()}M
+                    $2.4M
                   </div>
-                  <div style={{ "font-size": "0.875rem", color: "rgba(255,255,255,0.6)" }}>Projected Savings</div>
+                  <div style={{ "font-size": "0.875rem", color: "rgba(255,255,255,0.6)" }}>Projected Annual</div>
                 </div>
               </div>
               <div style={{ position: "relative", overflow: "hidden" }}>
