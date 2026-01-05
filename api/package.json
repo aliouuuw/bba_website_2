@@ -1,5 +1,5 @@
 {
-  "main": "dist/contact/index.js",
+  "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",

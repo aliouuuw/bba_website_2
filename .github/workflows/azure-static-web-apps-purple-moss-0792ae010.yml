@@ -41,6 +41,10 @@ jobs:
         working-directory: api
         run: bun install
 
+      - name: Build API
+        working-directory: api
+        run: bun run build
+
       # Copy SWA config into the static output folder
       - name: Include SWA config in uploaded app artifact
         working-directory: solidjs_bun_version

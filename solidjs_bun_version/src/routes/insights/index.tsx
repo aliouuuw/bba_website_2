@@ -64,9 +64,7 @@ export default function Insights() {
     } catch (err: any) {
       console.error("[Sanity Error] Failed to fetch insights:", {
         message: err.message,
-        projectId: import.meta.env.VITE_SANITY_PROJECT_ID,
         isCORS: err.message?.includes("CORS") || err.status === 403,
-        hasToken: !!import.meta.env.VITE_SANITY_TOKEN
       });
       throw err;
     }

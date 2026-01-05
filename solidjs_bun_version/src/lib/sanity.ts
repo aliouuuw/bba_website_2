@@ -1,35 +1,76 @@
 import { createClient } from "@sanity/client";
 import imageUrlBuilder from "@sanity/image-url";
 
-// Handle both server (process.env) and client (import.meta.env) environments
-const isServer = typeof window === "undefined";
+type PublicSanityConfig = {
+  projectId: string;
+  dataset: string;
+  useCdn: boolean;
+};
 
-const projectId = isServer
-  ? process.env.VITE_SANITY_PROJECT_ID || ""
-  : import.meta.env.VITE_SANITY_PROJECT_ID || "";
+const apiVersion = "2024-01-01";
+let clientPromise: Promise<ReturnType<typeof createClient>> | null = null;
+let builder: ReturnType<typeof imageUrlBuilder> | null = null;
 
-const dataset = isServer
-  ? process.env.VITE_SANITY_DATASET || "production"
-  : import.meta.env.VITE_SANITY_DATASET || "production";
+async function resolvePublicConfig(): Promise<PublicSanityConfig> {
+  const isServer = typeof window === "undefined";
 
-const token = isServer ? process.env.VITE_SANITY_TOKEN : undefined;
+  if (isServer) {
+    const projectId = process.env.VITE_SANITY_PROJECT_ID || "";
+    const dataset = process.env.VITE_SANITY_DATASET || "production";
+    const useCdn = process.env.VITE_SANITY_USE_CDN === "false" ? false : true;
+    return { projectId, dataset, useCdn };
+  }
 
-const isDev = isServer ? process.env.NODE_ENV === "development" : import.meta.env.DEV;
+  const projectId = import.meta.env.VITE_SANITY_PROJECT_ID || "";
+  const dataset = import.meta.env.VITE_SANITY_DATASET || "production";
+  const useCdn = import.meta.env.VITE_SANITY_USE_CDN === "false" ? false : true;
 
-export const sanityClient = createClient({
-  projectId: projectId,
-  dataset: dataset,
-  apiVersion: "2024-01-01",
-  // Use CDN in production for better performance, 
-  // but disable it if we have a token (authenticated reads) or if explicitly requested.
-  useCdn: token
-    ? false
-    : (isServer ? false : (import.meta.env.VITE_SANITY_USE_CDN === "false" ? false : true)),
-  token: token,
-});
+  if (projectId) {
+    return { projectId, dataset, useCdn };
+  }
 
-const builder = imageUrlBuilder(sanityClient);
+  const res = await fetch("/api/sanity-config");
+  if (!res.ok) {
+    throw new Error("Failed to load Sanity config");
+  }
+  const json = (await res.json()) as PublicSanityConfig;
+  return {
+    projectId: typeof json.projectId === "string" ? json.projectId : "",
+    dataset: typeof json.dataset === "string" ? json.dataset : "production",
+    useCdn: typeof json.useCdn === "boolean" ? json.useCdn : true,
+  };
+}
+
+export async function getSanityClient() {
+  if (clientPromise) return clientPromise;
+
+  clientPromise = (async () => {
+    const isServer = typeof window === "undefined";
+    const cfg = await resolvePublicConfig();
+    if (!cfg.projectId) {
+      throw new Error("Configuration must contain `projectId`");
+    }
+
+    const token = isServer ? process.env.VITE_SANITY_TOKEN : undefined;
+
+    const client = createClient({
+      projectId: cfg.projectId,
+      dataset: cfg.dataset,
+      apiVersion,
+      useCdn: token ? false : cfg.useCdn,
+      token,
+    });
+
+    builder = imageUrlBuilder(client);
+    return client;
+  })();
+
+  return clientPromise;
+}
 
 export function urlFor(source: any) {
+  if (!builder) {
+    throw new Error("Sanity client not initialized");
+  }
   return builder.image(source);
 }

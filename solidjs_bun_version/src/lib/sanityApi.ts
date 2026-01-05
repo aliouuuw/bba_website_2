@@ -1,4 +1,4 @@
-import { sanityClient, urlFor } from "./sanity";
+import { getSanityClient, urlFor } from "./sanity";
 import type { SanityNews, SanityArticle, BlogPost, SanityContent } from "./sanityTypes";
 import { toHTML } from "@portabletext/to-html";
 
@@ -15,7 +15,8 @@ function calculateReadTime(content: SanityContent): string {
   return `${minutes} min read`;
 }
 
-function convertPortableTextToHTML(content: SanityContent): string {
+async function convertPortableTextToHTML(content: SanityContent): Promise<string> {
+  await getSanityClient();
   return toHTML(content, {
     components: {
       types: {
@@ -65,7 +66,8 @@ function getCategoryFromType(type: string): string {
   return categoryMap[type] || "General";
 }
 
-function transformNewsToPost(news: SanityNews): BlogPost {
+async function transformNewsToPost(news: SanityNews): Promise<BlogPost> {
+  await getSanityClient();
   return {
     id: news._id,
     slug: news.slug.current,
@@ -75,13 +77,14 @@ function transformNewsToPost(news: SanityNews): BlogPost {
     description: news.preview,
     readTime: calculateReadTime(news.content),
     content: news.content,
-    htmlContent: convertPortableTextToHTML(news.content),
+    htmlContent: await convertPortableTextToHTML(news.content),
     image: news.preview_image ? urlFor(news.preview_image).width(800).url() : undefined,
     postType: "news",
   };
 }
 
-function transformArticleToPost(article: SanityArticle): BlogPost {
+async function transformArticleToPost(article: SanityArticle): Promise<BlogPost> {
+  await getSanityClient();
   return {
     id: article._id,
     slug: article.slug.current,
@@ -91,7 +94,7 @@ function transformArticleToPost(article: SanityArticle): BlogPost {
     description: article.preview,
     readTime: calculateReadTime(article.content),
     content: article.content,
-    htmlContent: convertPortableTextToHTML(article.content),
+    htmlContent: await convertPortableTextToHTML(article.content),
     image: article.image ? urlFor(article.image).width(800).url() : undefined,
     file: article.file?.asset?.url,
     postType: "article",
@@ -101,22 +104,13 @@ function transformArticleToPost(article: SanityArticle): BlogPost {
 
 async function fetchFromSanity<T>(query: string, params: Record<string, any> = {}): Promise<T> {
   try {
-    return await sanityClient.fetch<T>(query, params);
+    const client = await getSanityClient();
+    return await client.fetch<T>(query, params);
   } catch (err: any) {
-    const isServer = typeof window === "undefined";
-    const projectId = isServer
-      ? process.env.VITE_SANITY_PROJECT_ID
-      : import.meta.env.VITE_SANITY_PROJECT_ID;
-    const hasToken = isServer
-      ? !!process.env.VITE_SANITY_TOKEN
-      : !!import.meta.env.VITE_SANITY_TOKEN;
-    
     console.error("[Sanity API Error]:", {
       message: err.message,
       status: err.status,
-      projectId: projectId,
       isCORS: err.message?.includes("CORS") || err.status === 403,
-      hasToken: hasToken,
       query: query.substring(0, 100) + "..."
     });
     throw err;
@@ -124,6 +118,7 @@ async function fetchFromSanity<T>(query: string, params: Record<string, any> = {
 }
 
 export async function getAllPosts(): Promise<BlogPost[]> {
+  await getSanityClient();
   const query = `{
     "news": *[_type == "news" && defined(slug.current)] | order(datetime desc) {
       _id,
@@ -154,8 +149,8 @@ export async function getAllPosts(): Promise<BlogPost[]> {
     articles: SanityArticle[];
   }>(query);
 
-  const newsPosts = result.news.map(transformNewsToPost);
-  const articlePosts = result.articles.map(transformArticleToPost);
+  const newsPosts = await Promise.all(result.news.map(transformNewsToPost));
+  const articlePosts = await Promise.all(result.articles.map(transformArticleToPost));
 
   const allPosts = [...newsPosts, ...articlePosts].sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
@@ -169,6 +164,7 @@ export async function getRelatedPosts(args: {
   postType: "news" | "article";
   articleType?: SanityArticle["type"] | null;
 }): Promise<BlogPost[]> {
+  await getSanityClient();
   const query = `*[
     slug.current != $currentSlug &&
     (
@@ -195,12 +191,15 @@ export async function getRelatedPosts(args: {
     articleType: args.articleType ?? null,
   });
 
-  return results.map((post) =>
-    post._type === "news" ? transformNewsToPost(post) : transformArticleToPost(post)
+  return Promise.all(
+    results.map((post) =>
+      post._type === "news" ? transformNewsToPost(post) : transformArticleToPost(post)
+    )
   );
 }
 
 export async function getPostBySlug(slug: string): Promise<BlogPost | undefined> {
+  await getSanityClient();
   const query = `{
     "news": *[_type == "news" && slug.current == $slug][0] {
       _id,
@@ -243,6 +242,7 @@ export async function getPostBySlug(slug: string): Promise<BlogPost | undefined>
 }
 
 export async function getNewsPosts(): Promise<BlogPost[]> {
+  const client = await getSanityClient();
   const query = `*[_type == "news"] | order(datetime desc) {
     _id,
     _type,
@@ -254,11 +254,12 @@ export async function getNewsPosts(): Promise<BlogPost[]> {
     datetime
   }`;
 
-  const news = await sanityClient.fetch<SanityNews[]>(query);
-  return news.map(transformNewsToPost);
+  const news = await client.fetch<SanityNews[]>(query);
+  return Promise.all(news.map(transformNewsToPost));
 }
 
 export async function getArticlePosts(type?: string): Promise<BlogPost[]> {
+  const client = await getSanityClient();
   const typeFilter = type ? `&& type == "${type}"` : "";
   const query = `*[_type == "article" ${typeFilter}] | order(datetime desc) {
     _id,
@@ -273,6 +274,6 @@ export async function getArticlePosts(type?: string): Promise<BlogPost[]> {
     datetime
   }`;
 
-  const articles = await sanityClient.fetch<SanityArticle[]>(query);
-  return articles.map(transformArticleToPost);
+  const articles = await client.fetch<SanityArticle[]>(query);
+  return Promise.all(articles.map(transformArticleToPost));
 }
