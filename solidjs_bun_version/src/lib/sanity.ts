@@ -12,9 +12,7 @@ const dataset = isServer
   ? process.env.VITE_SANITY_DATASET || "production"
   : import.meta.env.VITE_SANITY_DATASET || "production";
 
-const token = isServer
-  ? process.env.VITE_SANITY_TOKEN
-  : import.meta.env.VITE_SANITY_TOKEN;
+const token = isServer ? process.env.VITE_SANITY_TOKEN : undefined;
 
 const isDev = isServer ? process.env.NODE_ENV === "development" : import.meta.env.DEV;
 
@@ -24,7 +22,9 @@ export const sanityClient = createClient({
   apiVersion: "2024-01-01",
   // Use CDN in production for better performance, 
   // but disable it if we have a token (authenticated reads) or if explicitly requested.
-  useCdn: token ? false : (isServer ? false : (import.meta.env.VITE_SANITY_USE_CDN === "false" ? false : true)),
+  useCdn: token
+    ? false
+    : (isServer ? false : (import.meta.env.VITE_SANITY_USE_CDN === "false" ? false : true)),
   token: token,
 });
 

@@ -31,6 +31,10 @@ jobs:
 
       - name: Build application
         working-directory: solidjs_bun_version
+        env:
+          VITE_SANITY_PROJECT_ID: ${{ secrets.VITE_SANITY_PROJECT_ID }}
+          VITE_SANITY_DATASET: ${{ secrets.VITE_SANITY_DATASET }}
+          VITE_SANITY_USE_CDN: ${{ secrets.VITE_SANITY_USE_CDN }}
         run: bun run build
 
       - name: Install API dependencies
