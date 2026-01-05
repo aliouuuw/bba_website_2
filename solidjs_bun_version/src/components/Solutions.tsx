@@ -1,19 +1,7 @@
- import { createEffect, createSignal, For, Show } from "solid-js";
+ import { createSignal, For, Switch, Match } from "solid-js";
 
 export default function Solutions() {
-  const [isMobile, setIsMobile] = createSignal(false);
-  const [openSection, setOpenSection] = createSignal<1 | 2 | 3>(1);
-
-  createEffect(() => {
-    if (typeof window === "undefined") return;
-
-    const mq = window.matchMedia("(max-width: 768px)");
-    const onChange = () => setIsMobile(mq.matches);
-    onChange();
-
-    mq.addEventListener("change", onChange);
-    return () => mq.removeEventListener("change", onChange);
-  });
+  const [openSection, setOpenSection] = createSignal<1 | 2 | 3 | null>(1);
 
   return (
     <section id="solutions" class="solutions dark-section">
@@ -23,213 +11,302 @@ export default function Solutions() {
           <h2>ENGINEERED FOR <span class="text-gradient">IMPACT</span></h2>
         </div>
 
-        {/* Solution 1 */}
-        <div class="solution-row reveal-slide">
-          <div class="solution-content">
-            <Show when={isMobile()}>
-              <button
-                type="button"
-                onClick={() => setOpenSection(1)}
-                style={{
-                  width: "100%",
-                  display: "flex",
-                  "align-items": "center",
-                  "justify-content": "space-between",
-                  gap: "1rem",
-                  padding: "1rem 1.25rem",
-                  background: "rgba(255,255,255,0.03)",
-                  border: "1px solid rgba(255,255,255,0.12)",
-                  "border-radius": "14px",
-                  color: "inherit",
-                  "text-align": "left",
-                  cursor: "pointer",
-                }}
-              >
-                <span style={{ "font-weight": 700, "letter-spacing": "0.02em" }}>AI STRATEGIC COMMAND CENTER</span>
-                <span class="font-mono" style={{ opacity: 0.7, "font-size": "0.875rem" }}>{openSection() === 1 ? "−" : "+"}</span>
-              </button>
-            </Show>
+        <div class="reveal-slide">
+          <ExpandableItem
+            title="🎯 AI STRATEGIC COMMAND CENTER"
+            isOpen={openSection() === 1}
+            onToggle={() => setOpenSection((prev) => (prev === 1 ? null : 1))}
+          >
+            <ProductTabs
+              title="AI STRATEGIC COMMAND CENTER"
+              problem={{
+                icon: "🎯",
+                heading: "The Problem: Strategic Drift in a Data-Rich World",
+                text: "You have dashboards showing what happened, but no clear guidance on what to do next. Leadership teams spend weeks debating strategy based on conflicting reports, while market opportunities pass by."
+              }}
+              solution={{
+                icon: "🚀",
+                heading: "Our Solution: Your AI Co-Pilot for Market Leadership",
+                text: "A dynamic intelligence platform that analyzes your data alongside market signals to generate prioritized action plans—not just more reports."
+              }}
+              outcomes={{
+                icon: "📈",
+                heading: "Your Business Outcomes",
+                items: [
+                  "Make faster strategic decisions with AI-generated initiatives tied to your specific objectives",
+                  "Identify hidden market opportunities 2-3 quarters before competitors",
+                  "Reduce strategic planning cycles from months to weeks with data-backed scenarios",
+                  "Align leadership teams around a single source of strategic truth",
+                ]
+              }}
+              features={{
+                heading: "Key Features That Deliver Results",
+                items: [
+                  { icon: "✅", text: "AI-Generated Strategic Plans → Receive monthly initiatives ranked by impact potential" },
+                  { icon: "✅", text: "Competitive Benchmarking Dashboards → See exactly where you outperform or lag peers" },
+                  { icon: "✅", text: "Market Opportunity Assessment → Identify underserved segments or products" },
+                  { icon: "✅", text: "Brand & Sentiment Tracking → Monitor how market perception affects your growth" },
+                ]
+              }}
+              cta={{
+                text: "Learn More",
+                link: "/strategic-command-center"
+              }}
+              visual={<NetworkGraph />}
+            />
+          </ExpandableItem>
 
-            <Show when={!isMobile() || openSection() === 1}>
-              <div style={{ "margin-top": isMobile() ? "1.25rem" : undefined }}>
-                <h3 style={{ "margin-bottom": "1.5rem" }}>AI STRATEGIC COMMAND CENTER</h3>
-                <InfoBlock
-                  icon="🎯"
-                  heading="The Problem"
-                  text="You have dashboards showing what happened, but no clear guidance on what to do next. Leadership teams spend weeks debating strategy based on conflicting reports, while market opportunities pass by."
-                />
-                <InfoBlock
-                  icon="🚀"
-                  heading="Our Solution"
-                  text="A dynamic intelligence platform that analyzes your data alongside market signals to generate prioritized action plans—not just more reports."
-                />
-                <OutcomeBlock
-                  icon="📈"
-                  heading="Your Business Outcomes"
-                  items={[
-                    "Make faster strategic decisions with AI-generated initiatives tied to your specific objectives",
-                    "Identify hidden market opportunities 2-3 quarters before competitors",
-                    "Reduce strategic planning cycles from months to weeks with data-backed scenarios",
-                    "Align leadership teams around a single source of strategic truth",
-                  ]}
-                />
-                <FeatureGrid
-                  heading="Key Features That Deliver Results"
-                  items={[
-                    { icon: "✅", text: "AI-Generated Strategic Plans → Receive monthly initiatives ranked by impact potential" },
-                    { icon: "✅", text: "Competitive Benchmarking Dashboards → See exactly where you outperform or lag peers" },
-                    { icon: "✅", text: "Market Opportunity Assessment → Identify underserved segments or products" },
-                    { icon: "✅", text: "Brand & Sentiment Tracking → Monitor how market perception affects your growth" },
-                  ]}
-                />
-                <a href="/strategic-command-center" class="btn btn-outline">Get Your Market Opportunity Assessment</a>
-              </div>
-            </Show>
-          </div>
-          <div class="solution-visual">
-            <NetworkGraph />
-          </div>
-        </div>
+          <ExpandableItem
+            title="🛡️ AI RISK ADVISOR PLATFORM"
+            isOpen={openSection() === 2}
+            onToggle={() => setOpenSection((prev) => (prev === 2 ? null : 2))}
+          >
+            <ProductTabs
+              title="AI RISK ADVISOR PLATFORM"
+              problem={{
+                icon: "⚠️",
+                heading: "The Problem: Reacting to Crises Instead of Preventing Them",
+                text: "Your risk management is manual, periodic, and fragmented across departments. You discover problems only after they've impacted earnings or triggered regulatory attention."
+              }}
+              solution={{
+                icon: "🛡️",
+                heading: "Our Solution: Predictive Risk Intelligence",
+                text: "A dynamic intelligence platform that analyzes your data alongside market signals to generate prioritized action plans—not just more reports."
+              }}
+              outcomes={{
+                icon: "📉",
+                heading: "Your Business Outcomes",
+                items: [
+                  "Reduce unexpected losses by 40-60% with proactive risk identification",
+                  "Cut regulatory exposure through continuous compliance monitoring",
+                  "Optimize capital allocation by accurately quantifying risk-adjusted returns",
+                  "Market performance in real time (terms apply)",
+                  "Transform risk management from a cost center to a strategic advantage",
+                ]
+              }}
+              features={{
+                heading: "Key Features That Deliver Results",
+                items: [
+                  { icon: "✅", text: "Early Warning System → Get alerts on emerging risks 30-90 days before material impact" },
+                  { icon: "✅", text: "Holistic Portfolio Surveillance → Continuously track asset performance and funding health to secure liquidity" },
+                  { icon: "✅", text: "Real-Time Liquidity Monitoring → Prevent funding crises with predictive cash flow analysis" },
+                  { icon: "✅", text: "Automated Mitigation Playbooks → Execute pre-approved responses to common risk scenarios" },
+                  { icon: "✅", text: "Holistic Risk Coverage → Credit, market, operational, cyber, and structural risks in one view" },
+                ]
+              }}
+              cta={{
+                text: "Learn More",
+                link: "/risk-advisor"
+              }}
+              visual={<RiskChart />}
+            />
+          </ExpandableItem>
 
-        {/* Solution 2 */}
-        <div class="solution-row reverse reveal-slide">
-          <div class="solution-content">
-            <Show when={isMobile()}>
-              <button
-                type="button"
-                onClick={() => setOpenSection(2)}
-                style={{
-                  width: "100%",
-                  display: "flex",
-                  "align-items": "center",
-                  "justify-content": "space-between",
-                  gap: "1rem",
-                  padding: "1rem 1.25rem",
-                  background: "rgba(255,255,255,0.03)",
-                  border: "1px solid rgba(255,255,255,0.12)",
-                  "border-radius": "14px",
-                  color: "inherit",
-                  "text-align": "left",
-                  cursor: "pointer",
-                }}
-              >
-                <span style={{ "font-weight": 700, "letter-spacing": "0.02em" }}>AI RISK ADVISOR PLATFORM</span>
-                <span class="font-mono" style={{ opacity: 0.7, "font-size": "0.875rem" }}>{openSection() === 2 ? "−" : "+"}</span>
-              </button>
-            </Show>
-
-            <Show when={!isMobile() || openSection() === 2}>
-              <div style={{ "margin-top": isMobile() ? "1.25rem" : undefined }}>
-                <h3 style={{ "margin-bottom": "1.5rem" }}>AI RISK ADVISOR PLATFORM</h3>
-                <InfoBlock
-                  icon="⚠️"
-                  heading="The Problem"
-                  text="Your risk management is manual, periodic, and fragmented across departments. You discover problems only after they've impacted earnings or triggered regulatory attention."
-                />
-                <InfoBlock
-                  icon="🛡️"
-                  heading="Our Solution"
-                  text="A unified platform that continuously monitors financial and non-financial risks, providing early warnings and automated mitigation playbooks."
-                />
-                <OutcomeBlock
-                  icon="📉"
-                  heading="Your Business Outcomes"
-                  items={[
-                    "Reduce unexpected losses by 40-60% with proactive risk identification",
-                    "Cut regulatory exposure through continuous compliance monitoring",
-                    "Optimize capital allocation by accurately quantifying risk-adjusted returns",
-                    "Transform risk management from a cost center to a strategic advantage",
-                  ]}
-                />
-                <FeatureGrid
-                  heading="Key Features That Deliver Results"
-                  items={[
-                    { icon: "✅", text: "Early Warning System → Get alerts on emerging risks 30-90 days before material impact" },
-                    { icon: "✅", text: "Holistic Portfolio Surveillance → Continuously track asset performance and funding health to secure liquidity" },
-                    { icon: "✅", text: "Real-Time Liquidity Monitoring → Prevent funding crises with predictive cash flow analysis" },
-                    { icon: "✅", text: "Automated Mitigation Playbooks → Execute pre-approved responses to common risk scenarios" },
-                    { icon: "✅", text: "Holistic Risk Coverage → Credit, market, operational, cyber, and structural risks in one view" },
-                  ]}
-                />
-                <a href="/risk-advisor" class="btn btn-outline">Schedule a Risk Gap Analysis</a>
-              </div>
-            </Show>
-          </div>
-          <div class="solution-visual">
-            <RiskChart />
-          </div>
-        </div>
-
-        {/* Solution 3 */}
-        <div class="solution-row reveal-slide">
-          <div class="solution-content">
-            <Show when={isMobile()}>
-              <button
-                type="button"
-                onClick={() => setOpenSection(3)}
-                style={{
-                  width: "100%",
-                  display: "flex",
-                  "align-items": "center",
-                  "justify-content": "space-between",
-                  gap: "1rem",
-                  padding: "1rem 1.25rem",
-                  background: "rgba(255,255,255,0.03)",
-                  border: "1px solid rgba(255,255,255,0.12)",
-                  "border-radius": "14px",
-                  color: "inherit",
-                  "text-align": "left",
-                  cursor: "pointer",
-                }}
-              >
-                <span style={{ "font-weight": 700, "letter-spacing": "0.02em" }}>AI COMPLIANCE CO-PILOT</span>
-                <span class="font-mono" style={{ opacity: 0.7, "font-size": "0.875rem" }}>{openSection() === 3 ? "−" : "+"}</span>
-              </button>
-            </Show>
-
-            <Show when={!isMobile() || openSection() === 3}>
-              <div style={{ "margin-top": isMobile() ? "1.25rem" : undefined }}>
-                <h3 style={{ "margin-bottom": "1.5rem" }}>AI COMPLIANCE CO-PILOT</h3>
-                <InfoBlock
-                  icon="📋"
-                  heading="The Problem"
-                  text="Your compliance team spends 70% of their time gathering data and formatting reports instead of strategic oversight. Manual processes create errors, delays, and audit findings."
-                />
-                <InfoBlock
-                  icon="⚖️"
-                  heading="Our Solution"
-                  text="Transform regulatory compliance from a manual burden to an automated, strategic function with pre-built templates and seamless data lineage."
-                />
-                <OutcomeBlock
-                  icon="✅"
-                  heading="Your Business Outcomes"
-                  items={[
-                    "Reduce compliance operating costs by 50-70% through automation",
-                    "Eliminate late or error-prone submissions with regulator-ready reporting",
-                    "Cut audit preparation time from weeks to days with full data lineage",
-                    "Reallocate FTEs from data assembly to strategic risk management",
-                  ]}
-                />
-                <FeatureGrid
-                  heading="Key Features That Deliver Results"
-                  items={[
-                    { icon: "✅", text: "Automated Data Integrity Engine → Ensure audit-ready, consistent data" },
-                    { icon: "✅", text: "Pre-built RegTech Templates → Basel, IFRS 9, AML/KYC, LCR, NSFR, NCCF ready-to-use" },
-                    { icon: "✅", text: "Drag-and-Drop Report Builder → Create regulator-ready reports without IT support" },
-                    { icon: "✅", text: "Granular Data Lineage → Click from any report value back to source transactions" },
-                    { icon: "✅", text: "Submission Manager → Track all filings, deadlines, and regulator communications" },
-                  ]}
-                />
-                <a href="/compliance-copilot" class="btn btn-outline">See Our RegTech Templates in Action</a>
-              </div>
-            </Show>
-          </div>
-          <div class="solution-visual">
-            <ComplianceVisual />
-          </div>
+          <ExpandableItem
+            title="⚖️ AI COMPLIANCE CO-PILOT"
+            isOpen={openSection() === 3}
+            onToggle={() => setOpenSection((prev) => (prev === 3 ? null : 3))}
+          >
+            <ProductTabs
+              title="AI COMPLIANCE CO-PILOT"
+              problem={{
+                icon: "📋",
+                heading: "The Problem: Regulatory Burden Draining Resources",
+                text: "Your compliance team spends 70% of their time gathering data and formatting reports instead of strategic oversight. Manual processes create errors, delays, and audit findings."
+              }}
+              solution={{
+                icon: "⚖️",
+                heading: "Our Solution: Automated RegTech Workflow",
+                text: "Transform regulatory compliance from a manual burden to an automated, strategic function with pre-built templates and seamless data lineage."
+              }}
+              outcomes={{
+                icon: "✅",
+                heading: "Your Business Outcomes",
+                items: [
+                  "Reduce compliance operating costs by 50-70% through automation",
+                  "Eliminate late or error-prone submissions with regulator-ready reporting",
+                  "Cut audit preparation time from weeks to days with full data lineage",
+                  "Reallocate FTEs from data assembly to strategic risk management",
+                ]
+              }}
+              features={{
+                heading: "Key Features That Deliver Results",
+                items: [
+                  { icon: "✅", text: "Automated Data Integrity Engine → Ensure audit-ready, consistent data" },
+                  { icon: "✅", text: "Pre-built RegTech Templates → Basel, IFRS 9, AML/KYC, LCR, NSFR, NCCF ready-to-use" },
+                  { icon: "✅", text: "Drag-and-Drop Report Builder → Create regulator-ready reports without IT support" },
+                  { icon: "✅", text: "Granular Data Lineage → Click from any report value back to source transactions" },
+                  { icon: "✅", text: "Submission Manager → Track all filings, deadlines, and regulator communications" },
+                ]
+              }}
+              cta={{
+                text: "Learn More",
+                link: "/compliance-copilot"
+              }}
+              visual={<ComplianceVisual />}
+            />
+          </ExpandableItem>
         </div>
       </div>
     </section>
+  );
+}
+
+function ProductTabs(props: {
+  title: string;
+  problem: { icon: string; heading: string; text: string };
+  solution: { icon: string; heading: string; text: string };
+  outcomes: { icon: string; heading: string; items: string[] };
+  features: { heading: string; items: Array<{ icon: string; text: string }> };
+  cta: { text: string; link: string };
+  visual: any;
+  reverse?: boolean;
+}) {
+  const [activeTab, setActiveTab] = createSignal<"overview" | "outcomes" | "features">("overview");
+
+  return (
+    <div class="product-tabs-container">
+      <div 
+        style={{ 
+          display: "flex", 
+          gap: "1rem", 
+          "margin-bottom": "2rem",
+          "border-bottom": "1px solid rgba(255, 255, 255, 0.1)",
+          padding: "0 0 1rem 0"
+        }}
+      >
+        <TabButton 
+          active={activeTab() === "overview"} 
+          onClick={() => setActiveTab("overview")}
+          label="Overview"
+        />
+        <TabButton 
+          active={activeTab() === "outcomes"} 
+          onClick={() => setActiveTab("outcomes")}
+          label="Outcomes"
+        />
+        <TabButton 
+          active={activeTab() === "features"} 
+          onClick={() => setActiveTab("features")}
+          label="Features"
+        />
+      </div>
+
+      <div class="solution-row">
+        <div class="solution-content">
+          <h3 style={{ "margin-bottom": "1.5rem" }}>{props.title}</h3>
+          
+          <div style={{ "min-height": "320px" }}>
+            <Switch>
+              <Match when={activeTab() === "overview"}>
+                <InfoBlock {...props.problem} />
+                <InfoBlock {...props.solution} />
+              </Match>
+              <Match when={activeTab() === "outcomes"}>
+                <OutcomeBlock {...props.outcomes} />
+              </Match>
+              <Match when={activeTab() === "features"}>
+                <FeatureGrid {...props.features} />
+              </Match>
+            </Switch>
+          </div>
+
+          <div style={{ "margin-top": "2rem" }}>
+            <a href={props.cta.link} class="btn btn-outline">{props.cta.text}</a>
+          </div>
+        </div>
+        <div class="solution-visual">
+          {props.visual}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function TabButton(props: { active: boolean; onClick: () => void; label: string }) {
+  return (
+    <button
+      onClick={props.onClick}
+      style={{
+        background: props.active ? "rgba(94, 234, 212, 0.1)" : "transparent",
+        border: props.active ? "1px solid var(--color-teal)" : "1px solid transparent",
+        color: props.active ? "var(--color-teal)" : "rgba(255, 255, 255, 0.6)",
+        padding: "0.5rem 1.25rem",
+        "border-radius": "20px",
+        cursor: "pointer",
+        "font-family": "var(--font-mono)",
+        "font-size": "0.8rem",
+        "text-transform": "uppercase",
+        "transition": "all 0.2s ease",
+        "font-weight": props.active ? "700" : "500"
+      }}
+    >
+      {props.label}
+    </button>
+  );
+}
+
+
+function ExpandableItem(props: { title: string; isOpen: boolean; onToggle: () => void; children: any }) {
+  return (
+    <div 
+      class="expandable-item" 
+      style={{ 
+        "margin-bottom": "1.5rem",
+        "background": "rgba(255, 255, 255, 0.02)",
+        "border": props.isOpen ? "1px solid rgba(94, 234, 212, 0.3)" : "1px solid rgba(255, 255, 255, 0.1)",
+        "border-left": `4px solid ${props.isOpen ? "var(--color-teal)" : "var(--color-lavender)"}`,
+        "border-radius": "4px",
+        "transition": "all 0.3s cubic-bezier(0.25, 1, 0.5, 1)"
+      }}
+    >
+      <button
+        class="expandable-header"
+        onClick={() => props.onToggle()}
+        aria-expanded={props.isOpen}
+        style={{
+          "background": props.isOpen ? "rgba(94, 234, 212, 0.05)" : "transparent",
+          "padding": "1.5rem 2rem",
+          "color": props.isOpen ? "var(--color-teal)" : "var(--color-white)",
+          "width": "100%",
+          "border": "none",
+          "cursor": "pointer",
+          "display": "flex",
+          "justify-content": "space-between",
+          "align-items": "center",
+          "text-align": "left",
+          "font-family": "var(--font-sans)",
+          "font-weight": "700",
+          "font-size": "1.1rem",
+          "letter-spacing": "0.02em"
+        }}
+      >
+        <span class="expandable-title">{props.title}</span>
+        <span 
+          class="expandable-icon" 
+          classList={{ open: props.isOpen }}
+          style={{
+            "transform": props.isOpen ? "rotate(180deg)" : "rotate(0deg)",
+            "transition": "transform 0.3s ease",
+            "color": props.isOpen ? "var(--color-teal)" : "rgba(255,255,255,0.5)"
+          }}
+        >
+          ▼
+        </span>
+      </button>
+      {props.isOpen && (
+        <div 
+          class="expandable-content"
+          style={{
+            "padding": "2.5rem 2rem",
+            "border-top": "1px solid rgba(255, 255, 255, 0.05)",
+            "background": "rgba(0, 0, 0, 0.1)"
+          }}
+        >
+          {props.children}
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -237,10 +314,10 @@ function InfoBlock(props: { icon: string; heading: string; text: string }) {
   return (
     <div style={{ "margin-bottom": "1.25rem" }}>
       <div style={{ display: "flex", gap: "0.75rem", "align-items": "baseline" }}>
-        <div style={{ width: "1.75rem", "text-align": "center", opacity: 0.95 }}>{props.icon}</div>
+        <div style={{ width: "1.75rem", "text-align": "center", "font-size": "1.25rem" }}>{props.icon}</div>
         <div style={{ flex: 1 }}>
-          <div class="font-mono" style={{ "font-size": "0.75rem", opacity: 0.75, "letter-spacing": "0.12em", "text-transform": "uppercase" }}>{props.heading}</div>
-          <p style={{ "margin-top": "0.5rem" }}>{props.text}</p>
+          <div class="font-mono" style={{ "font-size": "0.75rem", "color": "var(--color-teal)", "letter-spacing": "0.12em", "text-transform": "uppercase", "font-weight": "600" }}>{props.heading}</div>
+          <p style={{ "margin-top": "0.5rem", "color": "rgba(255, 255, 255, 0.9)", "font-size": "1rem" }}>{props.text}</p>
         </div>
       </div>
     </div>
@@ -249,13 +326,20 @@ function InfoBlock(props: { icon: string; heading: string; text: string }) {
 
 function OutcomeBlock(props: { icon: string; heading: string; items: string[] }) {
   return (
-    <div style={{ "margin-bottom": "1.75rem" }}>
+    <div style={{ "margin-bottom": "2rem", "background": "rgba(255, 255, 255, 0.02)", "padding": "1.5rem", "border-radius": "8px", "border": "1px solid rgba(255, 255, 255, 0.05)" }}>
       <div style={{ display: "flex", gap: "0.75rem", "align-items": "baseline" }}>
-        <div style={{ width: "1.75rem", "text-align": "center", opacity: 0.95 }}>{props.icon}</div>
+        <div style={{ width: "1.75rem", "text-align": "center", "font-size": "1.25rem" }}>{props.icon}</div>
         <div style={{ flex: 1 }}>
-          <div class="font-mono" style={{ "font-size": "0.75rem", opacity: 0.75, "letter-spacing": "0.12em", "text-transform": "uppercase" }}>{props.heading}</div>
-          <ul class="font-mono" style={{ "margin-top": "0.75rem", "padding-left": "1.1rem", "font-size": "0.875rem", "line-height": 1.5 }}>
-            <For each={props.items}>{(item) => <li style={{ "margin-bottom": "0.5rem" }}>{item}</li>}</For>
+          <div class="font-mono" style={{ "font-size": "0.75rem", "color": "var(--color-teal)", "letter-spacing": "0.12em", "text-transform": "uppercase", "font-weight": "600" }}>{props.heading}</div>
+          <ul style={{ "margin-top": "1rem", "padding-left": "0", "list-style": "none" }}>
+            <For each={props.items}>
+              {(item) => (
+                <li style={{ "margin-bottom": "0.75rem", "color": "rgba(255, 255, 255, 0.95)", "display": "flex", "gap": "0.75rem", "align-items": "flex-start", "font-size": "0.95rem" }}>
+                  <span style={{ "color": "var(--color-teal)", "font-weight": "bold" }}>→</span>
+                  {item}
+                </li>
+              )}
+            </For>
           </ul>
         </div>
       </div>
@@ -266,11 +350,11 @@ function OutcomeBlock(props: { icon: string; heading: string; items: string[] })
 function FeatureGrid(props: { heading: string; items: Array<{ icon: string; text: string }> }) {
   return (
     <div style={{ "margin-bottom": "2rem" }}>
-      <div class="font-mono" style={{ "font-size": "0.75rem", opacity: 0.75, "letter-spacing": "0.12em", "text-transform": "uppercase", "margin-bottom": "0.75rem" }}>{props.heading}</div>
+      <div class="font-mono" style={{ "font-size": "0.75rem", "color": "var(--color-periwinkle)", "letter-spacing": "0.12em", "text-transform": "uppercase", "margin-bottom": "1rem", "font-weight": "600" }}>{props.heading}</div>
       <div
         style={{
           display: "grid",
-          "grid-template-columns": "repeat(auto-fit, minmax(240px, 1fr))",
+          "grid-template-columns": "repeat(auto-fit, minmax(280px, 1fr))",
           gap: "0.75rem",
         }}
       >
@@ -280,14 +364,14 @@ function FeatureGrid(props: { heading: string; items: Array<{ icon: string; text
               style={{
                 display: "flex",
                 gap: "0.6rem",
-                padding: "0.85rem 1rem",
-                background: "rgba(255,255,255,0.03)",
-                border: "1px solid rgba(255,255,255,0.10)",
-                "border-radius": "14px",
+                padding: "1rem",
+                background: "rgba(255,255,255,0.02)",
+                border: "1px solid rgba(255,255,255,0.08)",
+                "border-radius": "8px",
               }}
             >
               <div style={{ width: "1.25rem", "text-align": "center" }}>{item.icon}</div>
-              <div style={{ "font-size": "0.9rem", "line-height": 1.4 }}>{item.text}</div>
+              <div style={{ "font-size": "0.9rem", "line-height": 1.4, "color": "rgba(255,255,255,0.85)" }}>{item.text}</div>
             </div>
           )}
         </For>
@@ -295,6 +379,7 @@ function FeatureGrid(props: { heading: string; items: Array<{ icon: string; text
     </div>
   );
 }
+
 
 function NetworkGraph() {
   return (
