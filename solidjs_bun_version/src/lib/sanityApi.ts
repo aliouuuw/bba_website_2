@@ -99,6 +99,22 @@ function transformArticleToPost(article: SanityArticle): BlogPost {
   };
 }
 
+async function fetchFromSanity<T>(query: string, params: Record<string, any> = {}): Promise<T> {
+  try {
+    return await sanityClient.fetch<T>(query, params);
+  } catch (err: any) {
+    console.error("[Sanity API Error]:", {
+      message: err.message,
+      status: err.status,
+      projectId: import.meta.env.VITE_SANITY_PROJECT_ID,
+      isCORS: err.message?.includes("CORS") || err.status === 403,
+      hasToken: !!import.meta.env.VITE_SANITY_TOKEN,
+      query: query.substring(0, 100) + "..."
+    });
+    throw err;
+  }
+}
+
 export async function getAllPosts(): Promise<BlogPost[]> {
   const query = `{
     "news": *[_type == "news" && defined(slug.current)] | order(datetime desc) {
@@ -125,7 +141,7 @@ export async function getAllPosts(): Promise<BlogPost[]> {
     }
   }`;
 
-  const result = await sanityClient.fetch<{
+  const result = await fetchFromSanity<{
     news: SanityNews[];
     articles: SanityArticle[];
   }>(query);
@@ -165,7 +181,7 @@ export async function getRelatedPosts(args: {
     file
   }`;
 
-  const results = await sanityClient.fetch<any[]>(query, {
+  const results = await fetchFromSanity<any[]>(query, {
     currentSlug: args.currentSlug,
     postType: args.postType,
     articleType: args.articleType ?? null,
@@ -202,7 +218,7 @@ export async function getPostBySlug(slug: string): Promise<BlogPost | undefined>
     }
   }`;
 
-  const result = await sanityClient.fetch<{
+  const result = await fetchFromSanity<{
     news: SanityNews | null;
     article: SanityArticle | null;
   }>(query, { slug });

@@ -37,7 +37,7 @@ export default function Header() {
               </ul>
             </li>
             <li><a href="#about" class="nav-link" onClick={(e) => { e.preventDefault(); navigateToAnchor("#about"); }}>About</a></li>
-            <li><a href="/blog" class="nav-link">Blog</a></li>
+            <li><a href="/insights" class="nav-link">Insights</a></li>
             <li><a href="/contact" class="nav-link">Contact</a></li>
           </ul>
           <a href="/contact" class="btn">Book a Demo</a>

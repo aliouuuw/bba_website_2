@@ -25,13 +25,13 @@ function formatDate(dateStr: string): string {
   return date.toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" });
 }
 
-export default function BlogPost() {
+export default function InsightPost() {
   const params = useParams();
   const slug = () => params.slug ?? "";
   const [post] = createQuery(
     () => {
       const s = slug();
-      return s ? `blog:post:${s}` : "";
+      return s ? `insights:post:${s}` : "";
     },
     async (key) => {
       const s = key.split(":")[2] || "";
@@ -59,6 +59,7 @@ export default function BlogPost() {
   const [readingProgress, setReadingProgress] = createSignal(0);
   const [showBackToTop, setShowBackToTop] = createSignal(false);
   const [isShareCopied, setIsShareCopied] = createSignal(false);
+  const [timeLeft, setTimeLeft] = createSignal("");
 
   const toc = createMemo(() => {
     const p = post();
@@ -131,6 +132,15 @@ export default function BlogPost() {
 
       setReadingProgress(pct);
       setShowBackToTop(scrollY > 600);
+
+      const p = post();
+      if (p?.readTime) {
+        const totalMinutes = parseInt(p.readTime);
+        if (!isNaN(totalMinutes)) {
+          const remainingMinutes = Math.max(1, Math.ceil(totalMinutes * (1 - pct / 100)));
+          setTimeLeft(pct > 95 ? "Finish line" : `${remainingMinutes} min left`);
+        }
+      }
     };
 
     update();
@@ -189,20 +199,39 @@ export default function BlogPost() {
           width: `${readingProgress()}%`,
           height: "3px",
           background: "var(--color-teal)",
-          "z-index": 1000,
+          "z-index": 1001,
           transition: "width 0.1s linear",
         }}
       />
+      <Show when={timeLeft() && readingProgress() > 5}>
+        <div style={{
+          position: "fixed",
+          top: "10px",
+          right: "20px",
+          background: "rgba(10, 22, 44, 0.8)",
+          color: "white",
+          padding: "4px 10px",
+          "border-radius": "4px",
+          "font-size": "0.7rem",
+          "font-family": "var(--font-mono)",
+          "z-index": 1000,
+          "backdrop-filter": "blur(4px)",
+          border: "1px solid rgba(255,255,255,0.1)",
+          transition: "opacity 0.3s"
+        }}>
+          {timeLeft()}
+        </div>
+      </Show>
       <Title>{post()?.title || "Loading..." } - BBA FinTech</Title>
       <Meta name="description" content={post()?.description || "Read insights on AI, regulatory technology, and financial strategy from BBA FinTech."} />
-      <Meta name="og:title" content={post()?.title || "BBA FinTech Blog"} />
+      <Meta name="og:title" content={post()?.title || "BBA FinTech Insights"} />
       <Meta name="og:description" content={post()?.description || "Read insights on AI, regulatory technology, and financial strategy from BBA FinTech."} />
       <Meta name="og:image" content={post()?.image || "https://bba-website.com/og-image.png"} />
       <Meta name="og:type" content="article" />
       <Meta name="article:published_time" content={post()?.date || ""} />
       <Meta name="article:author" content="BBA FinTech" />
       <Meta name="twitter:card" content="summary_large_image" />
-      <Meta name="twitter:title" content={post()?.title || "BBA FinTech Blog"} />
+      <Meta name="twitter:title" content={post()?.title || "BBA FinTech Insights"} />
       <Meta name="twitter:description" content={post()?.description || "Read insights on AI, regulatory technology, and financial strategy from BBA FinTech."} />
       <Meta name="twitter:image" content={post()?.image || "https://bba-website.com/og-image.png"} />
       <link rel="canonical" href={typeof window !== "undefined" ? window.location.href : ""} />
@@ -219,7 +248,7 @@ export default function BlogPost() {
           <section style={{ padding: "10rem 0", "text-align": "center" }}>
             <h1 class="text-gradient">ACCESS ERROR</h1>
             <p style={{ "margin-bottom": "2rem" }}>We couldn't retrieve this intelligence report.</p>
-            <A href="/blog" class="btn">Back to Hub</A>
+            <A href="/insights" class="btn">Back to Hub</A>
           </section>
         </Show>
 
@@ -227,19 +256,19 @@ export default function BlogPost() {
           <section style={{ padding: "10rem 0", "text-align": "center" }}>
             <h1 class="text-gradient">404: NOT FOUND</h1>
             <p style={{ "margin-bottom": "2rem" }}>This transmission doesn't exist or has been archived.</p>
-            <A href="/blog" class="btn">Back to Hub</A>
+            <A href="/insights" class="btn">Back to Hub</A>
           </section>
         </Show>
 
         <Show when={post()}>
-          <article>
+          <article class="fade-in" data-key={slug()}>
             <section class="hero" style={{ "min-height": "50vh", "padding-bottom": "4rem", background: "var(--color-navy)", position: "relative" }}>
               <div class="container" style={{ position: "relative", "z-index": 1 }}>
                 <nav class="breadcrumbs font-mono" style={{ "margin-bottom": "2rem", "font-size": "0.75rem", color: "rgba(255,255,255,0.5)" }}>
                   <A href="/" style={{ color: "inherit", "text-decoration": "none" }}>HOME</A> / 
-                  <A href="/blog" style={{ color: "inherit", "text-decoration": "none", "margin": "0 0.5rem" }}>INSIGHTS</A> / 
+                  <A href="/insights" style={{ color: "inherit", "text-decoration": "none", "margin": "0 0.5rem" }}>INSIGHTS</A> / 
                   <A
-                    href={`/blog?category=${categoryKey()}`}
+                    href={`/insights?category=${categoryKey()}`}
                     style={{ color: "inherit", "text-decoration": "none", "margin": "0 0.5rem" }}
                   >
                     {categoryLabel()}
@@ -262,11 +291,11 @@ export default function BlogPost() {
               </div>
             </section>
 
-            <section class="blog-content-section" style={{ padding: "6rem 0", background: "var(--color-white)", overflow: "visible" }}>
+            <section class="insights-content-section" style={{ padding: "6rem 0", background: "var(--color-white)", overflow: "visible" }}>
               <div class="container" style={{ display: "grid", "grid-template-columns": "minmax(0, 850px) 250px", gap: "4rem", "align-items": "start" }}>
-                <div class="blog-main-column">
+                <div class="insight-main-column">
                   <div 
-                    class="blog-article-content"
+                    class="insight-article-content"
                     innerHTML={htmlWithIds()}
                   />
                   
@@ -293,14 +322,14 @@ export default function BlogPost() {
                 </Show>
 
                   <div style={{ "margin-top": "4rem", "padding-top": "2rem", "border-top": "1px solid rgba(0,0,0,0.1)", display: "flex", "justify-content": "space-between", "align-items": "center" }}>
-                    <A href="/blog" class="read-more font-mono">&larr; BACK TO INSIGHTS</A>
+                    <A href="/insights" class="read-more font-mono">&larr; BACK TO INSIGHTS</A>
                     <button onClick={shareArticle} class="btn btn-outline" style={{ "padding": "0.5rem 1rem", "font-size": "0.75rem" }}>
                       {isShareCopied() ? "LINK COPIED" : "SHARE ARTICLE"}
                     </button>
                   </div>
                 </div>
 
-                <aside class="blog-sidebar" style={{ position: "sticky", top: "100px", display: "flex", "flex-direction": "column", gap: "2.5rem" }}>
+                <aside class="insight-sidebar" style={{ position: "sticky", top: "100px", display: "flex", "flex-direction": "column", gap: "2.5rem" }}>
                   <Show when={toc().length > 0}>
                     <div class="toc-container">
                       <h4 class="font-mono" style={{ "font-size": "0.75rem", "margin-bottom": "1.25rem", "letter-spacing": "0.1em", color: "var(--color-navy)" }}>TABLE OF CONTENTS</h4>
@@ -364,20 +393,20 @@ export default function BlogPost() {
             <section style={{ padding: "6rem 0", background: "var(--color-off-white)", "border-top": "1px solid rgba(0,0,0,0.05)" }}>
               <div class="container">
                 <h2 style={{ "margin-bottom": "3rem", "text-align": "center" }}>RELATED <span class="text-gradient">INSIGHTS</span></h2>
-                <div class="blog-grid">
+                <div class="insights-grid">
                    <For each={relatedPosts()}>
                     {(rPost, i) => (
-                      <article class="blog-card">
-                        <A href={`/blog/${rPost.slug}`} style={{ "text-decoration": "none", color: "inherit" }}>
+                      <article class="insight-card">
+                        <A href={`/insights/${rPost.slug}`} style={{ "text-decoration": "none", color: "inherit" }}>
                           <Show 
                             when={rPost.image}
-                            fallback={<div class="blog-image" style={{ background: gradients[i() % gradients.length] }}></div>}
+                            fallback={<div class="insight-image" style={{ background: gradients[i() % gradients.length] }}></div>}
                           >
-                            <div class="blog-image" style={{ "background-image": `url(${rPost.image})`, "background-size": "cover", "background-position": "center" }}></div>
+                            <div class="insight-image" style={{ "background-image": `url(${rPost.image})`, "background-size": "cover", "background-position": "center" }}></div>
                           </Show>
-                          <div class="blog-content">
+                          <div class="insight-content">
                             <div style={{ display: "flex", "justify-content": "space-between", "margin-bottom": "0.5rem" }}>
-                                <span class="blog-meta font-mono" style={{ margin: 0 }}>{rPost.category}</span>
+                                <span class="insight-meta font-mono" style={{ margin: 0 }}>{rPost.category}</span>
                                 <span class="font-mono" style={{ "font-size": "0.7rem", color: "#94A3B8" }}>{formatDate(rPost.date)}</span>
                             </div>
                             <h3 style={{ "font-size": "1.1rem", "margin-bottom": "1rem" }}>{rPost.title}</h3>
@@ -449,6 +478,13 @@ export default function BlogPost() {
         </button>
       </Show>
       <style>{`
+        .fade-in {
+          animation: contentFadeIn 0.5s ease-out forwards;
+        }
+        @keyframes contentFadeIn {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
         .anchor-offset {
           display: block;
           position: relative;
@@ -466,10 +502,10 @@ export default function BlogPost() {
           color: var(--color-teal) !important;
         }
         @media (max-width: 1024px) {
-          .blog-sidebar {
+          .insight-sidebar {
             display: none !important;
           }
-          .blog-content-section .container {
+          .insights-content-section .container {
             grid-template-columns: 1fr !important;
           }
         }

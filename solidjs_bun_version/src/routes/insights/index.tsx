@@ -45,7 +45,7 @@ function filterPosts(allPosts: BlogPost[], category: string, search: string): Bl
   });
 }
 
-export default function Blog() {
+export default function Insights() {
   const [searchParams, setSearchParams] = useSearchParams();
   
   const initialCategory = (searchParams.category as string) || "all";
@@ -54,7 +54,23 @@ export default function Blog() {
   const [activeCategory, setActiveCategory] = createSignal(initialCategory);
   const [searchQuery, setSearchQuery] = createSignal(initialSearch);
   
-  const [allPosts] = createQuery("blog:all-posts", async (_key) => getAllPosts(), {
+  // Debounced search query for performance
+  const [debouncedSearch, setDebouncedSearch] = createSignal(initialSearch);
+  let debounceTimer: ReturnType<typeof setTimeout>;
+
+  const [allPosts] = createQuery("insights:all-posts", async (_key) => {
+    try {
+      return await getAllPosts();
+    } catch (err: any) {
+      console.error("[Sanity Error] Failed to fetch insights:", {
+        message: err.message,
+        projectId: import.meta.env.VITE_SANITY_PROJECT_ID,
+        isCORS: err.message?.includes("CORS") || err.status === 403,
+        hasToken: !!import.meta.env.VITE_SANITY_TOKEN
+      });
+      throw err;
+    }
+  }, {
     staleTime: 10 * 60 * 1000,
     refetchOnWindowFocus: true,
   });
@@ -66,20 +82,28 @@ export default function Blog() {
   
   const handleSearchChange = (query: string) => {
     setSearchQuery(query);
+    
+    // Update URL immediately for better responsiveness
     setSearchParams({ category: activeCategory() === "all" ? undefined : activeCategory(), q: query || undefined }, { replace: true });
+    
+    // Debounce the actual filter computation
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+      setDebouncedSearch(query);
+    }, 250);
   };
   
   const filteredPosts = createMemo(() => {
     const posts = allPosts();
     if (!posts) return [];
-    return filterPosts(posts, activeCategory(), searchQuery());
+    return filterPosts(posts, activeCategory(), debouncedSearch());
   });
 
   const sharePage = () => {
     if (typeof window === "undefined") return;
     const url = window.location.href;
     if (navigator.share) {
-      navigator.share({ title: "BBA Blog - AI Finance Insights", url }).catch(() => {});
+      navigator.share({ title: "BBA Insights - AI Finance Insights", url }).catch(() => {});
     } else if (navigator.clipboard) {
       navigator.clipboard.writeText(url).catch(() => {});
     }
@@ -103,7 +127,7 @@ export default function Blog() {
           </div>
         </section>
 
-        <section class="blog-filters" style={{ padding: "2rem 0", background: "var(--color-white)", "border-bottom": "1px solid rgba(0,0,0,0.05)" }}>
+        <section class="insights-filters" style={{ padding: "2rem 0", background: "var(--color-white)", "border-bottom": "1px solid rgba(0,0,0,0.05)" }}>
           <div class="container">
             <div style={{ display: "flex", "flex-wrap": "wrap", "justify-content": "space-between", "align-items": "center", gap: "2rem" }}>
               <div class="category-tabs" style={{ display: "flex", "gap": "1rem", "overflow-x": "auto", "padding-bottom": "0.5rem" }}>
@@ -148,13 +172,13 @@ export default function Blog() {
           </div>
         </section>
 
-        <section class="blog-section" style={{ padding: "4rem 0", background: "var(--color-off-white)", "min-height": "60vh" }}>
+        <section class="insights-section" style={{ padding: "4rem 0", background: "var(--color-off-white)", "min-height": "60vh" }}>
           <div class="container">
             <Show when={allPosts.loading}>
-              <div class="blog-grid">
+              <div class="insights-grid">
                 <For each={[1, 2, 3, 4, 5, 6]}>
                   {() => (
-                    <div class="blog-card skeleton" style={{ height: "400px", background: "rgba(0,0,0,0.05)", "border-radius": "8px", position: "relative", overflow: "hidden" }}>
+                    <div class="insight-card skeleton" style={{ height: "400px", background: "rgba(0,0,0,0.05)", "border-radius": "8px", position: "relative", overflow: "hidden" }}>
                       <div style={{ position: "absolute", inset: 0, background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)", animation: "shimmer 1.5s infinite" }}></div>
                     </div>
                   )}
@@ -164,7 +188,7 @@ export default function Blog() {
 
             <Show when={allPosts.error}>
               <div style={{ "text-align": "center", padding: "4rem 0", color: "red" }}>
-                <p>Error loading posts. Please try again later.</p>
+                <p>Error loading insights. Please try again later.</p>
               </div>
             </Show>
 
@@ -182,17 +206,17 @@ export default function Blog() {
             </Show>
 
             <Show when={allPosts() && filteredPosts().length > 0}>
-              <div class="blog-grid">
+              <div class="insights-grid">
                 <For each={filteredPosts()}>
                   {(post, i) => (
-                    <article class="blog-card" data-key={post.slug}>
-                      <A href={`/blog/${post.slug}`} style={{ "text-decoration": "none", color: "inherit" }}>
+                    <article class="insight-card" data-key={post.slug}>
+                      <A href={`/insights/${post.slug}`} style={{ "text-decoration": "none", color: "inherit" }}>
                         <Show
                           when={post.image}
-                          fallback={<div class="blog-image" style={{ background: gradients[i() % gradients.length] }}></div>}
+                          fallback={<div class="insight-image" style={{ background: gradients[i() % gradients.length] }}></div>}
                         >
                           <div 
-                            class="blog-image" 
+                            class="insight-image" 
                             style={{ 
                               "background-image": `url(${post.image})`, 
                               "background-size": "cover", 
@@ -201,9 +225,9 @@ export default function Blog() {
                             }} 
                           ></div>
                         </Show>
-                        <div class="blog-content">
+                        <div class="insight-content">
                           <div style={{ display: "flex", "justify-content": "space-between", "margin-bottom": "1rem" }}>
-                            <span class="blog-meta font-mono">{post.category}</span>
+                            <span class="insight-meta font-mono">{post.category}</span>
                             <span class="font-mono" style={{ "font-size": "0.7rem", color: "#94A3B8" }}>{formatDate(post.date)}</span>
                           </div>
                           <h3>{post.title}</h3>
@@ -254,7 +278,7 @@ export default function Blog() {
           0% { transform: translateX(-100%); }
           100% { transform: translateX(100%); }
         }
-        .blog-card:hover .blog-image {
+        .insight-card:hover .insight-image {
           transform: scale(1.05);
         }
         .category-tabs::-webkit-scrollbar {

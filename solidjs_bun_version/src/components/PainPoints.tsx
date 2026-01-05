@@ -133,7 +133,7 @@ export default function PainPoints() {
                 <a href="/contact" class="btn" style={{ background: "var(--color-navy)", color: "white" }}>
                   Speak with a Financial Solutions Architect
                 </a>
-                <a href="/blog" class="btn" style={{ background: "var(--color-teal)", color: "var(--color-navy)" }}>
+                <a href="/insights" class="btn" style={{ background: "var(--color-teal)", color: "var(--color-navy)" }}>
                   See Relevant Case Studies
                 </a>
               </div>
