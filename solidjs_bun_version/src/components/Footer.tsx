@@ -1,3 +1,5 @@
+import { openPreferences } from "../lib/cookieConsent";
+
 export default function Footer() {
   return (
     <footer class="footer">
@@ -11,7 +13,8 @@ export default function Footer() {
           </div>
           <div class="footer-links">
             <h4>Links</h4>
-            <a href="#">Privacy Policy</a>
+            <a href="/privacy">Privacy Policy</a>
+            <a href="#" onClick={(e) => { e.preventDefault(); openPreferences(); }}>Cookie Settings</a>
             <a href="#">Terms of Service</a>
             <a href="#">Careers</a>
           </div>

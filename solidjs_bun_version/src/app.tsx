@@ -2,8 +2,9 @@ import { MetaProvider, Title, Link, Meta } from "@solidjs/meta";
 import { Router } from "@solidjs/router";
 import { FileRoutes } from "@solidjs/start/router";
 import { Suspense, onMount } from "solid-js";
-import CookieBanner from "./components/CookieBanner";
 import "./app.css";
+import CookieBanner from "./components/CookieBanner";
+import CookiePreferences from "./components/CookiePreferences";
 
 export default function App() {
   return (
@@ -23,6 +24,7 @@ export default function App() {
           <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
           <Suspense>{props.children}</Suspense>
           <CookieBanner />
+          <CookiePreferences />
         </MetaProvider>
       )}
     >
