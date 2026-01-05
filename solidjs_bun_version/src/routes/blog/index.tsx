@@ -1,9 +1,10 @@
 import { Title } from "@solidjs/meta";
-import { A } from "@solidjs/router";
-import { createResource, createSignal, For, Show, createMemo } from "solid-js";
+import { A, useSearchParams } from "@solidjs/router";
+import { createSignal, For, Show, createMemo } from "solid-js";
 import Header from "~/components/Header";
 import Footer from "~/components/Footer";
 import { getAllPosts } from "~/lib/sanityApi";
+import { createQuery } from "~/lib/query";
 import type { BlogPost } from "~/lib/sanityTypes";
 
 const gradients = [
@@ -29,9 +30,11 @@ function formatDate(dateStr: string): string {
 
 function filterPosts(allPosts: BlogPost[], category: string, search: string): BlogPost[] {
   return allPosts.filter((post) => {
-    const matchesCategory = category === "all" || 
+    const matchesCategory =
+      category === "all" ||
       (category === "news" && post.postType === "news") ||
-      (category !== "news" && post.articleType === category);
+      (category === "article" && post.postType === "article") ||
+      (post.postType === "article" && post.articleType === category);
     
     const searchLower = search.toLowerCase();
     const matchesSearch = !search || 
@@ -43,10 +46,28 @@ function filterPosts(allPosts: BlogPost[], category: string, search: string): Bl
 }
 
 export default function Blog() {
-  const [activeCategory, setActiveCategory] = createSignal("all");
-  const [searchQuery, setSearchQuery] = createSignal("");
+  const [searchParams, setSearchParams] = useSearchParams();
   
-  const [allPosts] = createResource(() => getAllPosts());
+  const initialCategory = (searchParams.category as string) || "all";
+  const initialSearch = (searchParams.q as string) || "";
+  
+  const [activeCategory, setActiveCategory] = createSignal(initialCategory);
+  const [searchQuery, setSearchQuery] = createSignal(initialSearch);
+  
+  const [allPosts] = createQuery("blog:all-posts", async (_key) => getAllPosts(), {
+    staleTime: 10 * 60 * 1000,
+    refetchOnWindowFocus: true,
+  });
+  
+  const handleCategoryChange = (category: string) => {
+    setActiveCategory(category);
+    setSearchParams({ category: category === "all" ? undefined : category, q: searchQuery() || undefined }, { replace: true });
+  };
+  
+  const handleSearchChange = (query: string) => {
+    setSearchQuery(query);
+    setSearchParams({ category: activeCategory() === "all" ? undefined : activeCategory(), q: query || undefined }, { replace: true });
+  };
   
   const filteredPosts = createMemo(() => {
     const posts = allPosts();
@@ -89,7 +110,7 @@ export default function Blog() {
                 <For each={categories}>
                   {(cat) => (
                     <button
-                      onClick={() => setActiveCategory(cat.value)}
+                      onClick={() => handleCategoryChange(cat.value)}
                       class={`font-mono ${activeCategory() === cat.value ? 'active' : ''}`}
                       style={{
                         padding: "0.5rem 1.5rem",
@@ -112,7 +133,7 @@ export default function Blog() {
                 <input
                   type="text"
                   placeholder="Search articles..."
-                  onInput={(e) => setSearchQuery(e.currentTarget.value)}
+                  onInput={(e) => handleSearchChange(e.currentTarget.value)}
                   value={searchQuery()}
                   style={{
                     width: "100%",

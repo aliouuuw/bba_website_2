@@ -1,9 +1,10 @@
-import { Title } from "@solidjs/meta";
+import { Title, Meta } from "@solidjs/meta";
 import { useParams, A } from "@solidjs/router";
 import { createResource, Show, For } from "solid-js";
 import Header from "~/components/Header";
 import Footer from "~/components/Footer";
 import { getPostBySlug, getRelatedPosts } from "~/lib/sanityApi";
+import { createQuery } from "~/lib/query";
 
 function formatDate(dateStr: string): string {
   const date = new Date(dateStr);
@@ -13,7 +14,33 @@ function formatDate(dateStr: string): string {
 export default function BlogPost() {
   const params = useParams();
   const slug = () => params.slug ?? "";
-  const [post] = createResource(slug, getPostBySlug);
+  const [post] = createQuery(
+    () => {
+      const s = slug();
+      return s ? `blog:post:${s}` : "";
+    },
+    async (key) => {
+      const s = key.split(":")[2] || "";
+      if (!s) return undefined;
+      return getPostBySlug(s);
+    },
+    { staleTime: 15 * 60 * 1000 }
+  );
+
+  const categoryKey = () => {
+    const p = post();
+    if (!p) return "all";
+    if (p.postType === "news") return "news";
+    return p.articleType ?? "article";
+  };
+
+  const categoryLabel = () => {
+    const p = post();
+    if (!p) return "";
+    if (p.postType === "news") return "NEWS";
+    if (!p.articleType) return "ARTICLES";
+    return p.category.toUpperCase();
+  };
   
   const [relatedPosts] = createResource(
     () => {
@@ -46,6 +73,18 @@ export default function BlogPost() {
   return (
     <>
       <Title>{post()?.title || "Loading..." } - BBA FinTech</Title>
+      <Meta name="description" content={post()?.description || "Read insights on AI, regulatory technology, and financial strategy from BBA FinTech."} />
+      <Meta name="og:title" content={post()?.title || "BBA FinTech Blog"} />
+      <Meta name="og:description" content={post()?.description || "Read insights on AI, regulatory technology, and financial strategy from BBA FinTech."} />
+      <Meta name="og:image" content={post()?.image || "https://bba-website.com/og-image.png"} />
+      <Meta name="og:type" content="article" />
+      <Meta name="article:published_time" content={post()?.date || ""} />
+      <Meta name="article:author" content="BBA FinTech" />
+      <Meta name="twitter:card" content="summary_large_image" />
+      <Meta name="twitter:title" content={post()?.title || "BBA FinTech Blog"} />
+      <Meta name="twitter:description" content={post()?.description || "Read insights on AI, regulatory technology, and financial strategy from BBA FinTech."} />
+      <Meta name="twitter:image" content={post()?.image || "https://bba-website.com/og-image.png"} />
+      <link rel="canonical" href={typeof window !== "undefined" ? window.location.href : ""} />
       <Header />
       <main>
         <Show when={post.loading}>
@@ -78,7 +117,14 @@ export default function BlogPost() {
                 <nav class="breadcrumbs font-mono" style={{ "margin-bottom": "2rem", "font-size": "0.75rem", color: "rgba(255,255,255,0.5)" }}>
                   <A href="/" style={{ color: "inherit", "text-decoration": "none" }}>HOME</A> / 
                   <A href="/blog" style={{ color: "inherit", "text-decoration": "none", "margin": "0 0.5rem" }}>INSIGHTS</A> / 
-                  <span style={{ color: "var(--color-teal)" }}>{post()!.title.toUpperCase()}</span>
+                  <A
+                    href={`/blog?category=${categoryKey()}`}
+                    style={{ color: "inherit", "text-decoration": "none", "margin": "0 0.5rem" }}
+                  >
+                    {categoryLabel()}
+                  </A>
+                  /
+                  <span style={{ color: "var(--color-teal)", "margin-left": "0.5rem" }}>{post()!.title.toUpperCase()}</span>
                 </nav>
                 
                 <div class="font-mono text-gradient" style={{ "margin-bottom": "1.5rem", "font-size": "0.875rem", "letter-spacing": "0.05em" }}>
