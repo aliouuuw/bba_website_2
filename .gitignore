@@ -17,3 +17,7 @@ bun.lock
 # Environment
 .env
 .env.local
+
+# Azure Functions local settings (contains secrets)
+api/local.settings.json
+local.settings.json
