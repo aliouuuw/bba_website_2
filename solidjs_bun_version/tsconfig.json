@@ -18,6 +18,6 @@
       "~/*": ["./src/*"]
     }
   },
-  "include": ["src/**/*", "scripts/generate-blog-data.ts", "app.config.ts"],
+  "include": ["src/**/*", "app.config.ts"],
   "exclude": ["node_modules", "dist", "scripts/prerender.tsx"]
 }

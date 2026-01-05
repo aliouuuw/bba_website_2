@@ -29,10 +29,6 @@ jobs:
         working-directory: solidjs_bun_version
         run: bun install
 
-      - name: Generate blog data
-        working-directory: solidjs_bun_version
-        run: bun run generate-blog
-
       - name: Build application
         working-directory: solidjs_bun_version
         run: bun run build
