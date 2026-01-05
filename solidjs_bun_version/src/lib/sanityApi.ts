@@ -103,12 +103,20 @@ async function fetchFromSanity<T>(query: string, params: Record<string, any> = {
   try {
     return await sanityClient.fetch<T>(query, params);
   } catch (err: any) {
+    const isServer = typeof window === "undefined";
+    const projectId = isServer
+      ? process.env.VITE_SANITY_PROJECT_ID
+      : import.meta.env.VITE_SANITY_PROJECT_ID;
+    const hasToken = isServer
+      ? !!process.env.VITE_SANITY_TOKEN
+      : !!import.meta.env.VITE_SANITY_TOKEN;
+    
     console.error("[Sanity API Error]:", {
       message: err.message,
       status: err.status,
-      projectId: import.meta.env.VITE_SANITY_PROJECT_ID,
+      projectId: projectId,
       isCORS: err.message?.includes("CORS") || err.status === 403,
-      hasToken: !!import.meta.env.VITE_SANITY_TOKEN,
+      hasToken: hasToken,
       query: query.substring(0, 100) + "..."
     });
     throw err;
