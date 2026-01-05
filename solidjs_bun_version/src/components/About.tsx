@@ -1,4 +1,19 @@
+import { createSignal, Show } from "solid-js";
+
 export default function About() {
+  const [showFounders, setShowFounders] = createSignal(false);
+
+  const founders = [
+    {
+      name: "Sohail FAROOQ",
+      role: "CEO",
+      bio:
+        "Throughout his 20+ year career, in positions with management responsibility and also as a consultant, Sohail has worked at the forefront of developing analytical solutions using digital technology.",
+      imageUrl: "/founders/Sohail.png",
+      linkedinUrl: "https://ca.linkedin.com/in/sohail-farooq-mqf-msc-mba-05b4403",
+    },
+  ];
+
   return (
     <section id="about" class="about">
       <div class="container">
@@ -34,14 +49,75 @@ export default function About() {
             <p style={{ "margin-bottom": "1rem" }}>We bridge the gap between insight and action. Because in today's complex landscape, you need more than data - you need a strategic partner who has walked your path.</p>
 
             <p style={{ "margin-bottom": "1rem" }}>Ready to close your Decision Gap?</p>
-            <div style={{ "margin-bottom": "1rem", display: "flex", gap: "1rem", "flex-wrap": "wrap" }}>
-              <a href="/contact" class="btn" style={{ background: "var(--color-navy)", color: "white" }}>
-                Speak with a Financial Solutions Architect
-              </a>
-              <a href="/blog" class="btn" style={{ background: "var(--color-teal)", color: "var(--color-navy)" }}>
-                See Relevant Case Studies
+            <div style={{ "margin-bottom": "2rem", display: "flex", gap: "1rem", "flex-wrap": "wrap" }}>
+              <button
+                onClick={() => setShowFounders(!showFounders())}
+                class="btn"
+                style={{
+                  background: "var(--color-navy)",
+                  color: "white",
+                  display: "flex",
+                  "align-items": "center",
+                  gap: "0.5 vh",
+                  border: "none",
+                  cursor: "pointer"
+                }}
+              >
+                Meet Our Founders {showFounders() ? "↑" : "↓"}
+              </button>
+              <a href="/contact" class="btn" style={{ background: "var(--color-teal)", color: "var(--color-navy)", "text-decoration": "none" }}>
+                Book a Strategy Session
               </a>
             </div>
+
+            <Show when={showFounders()}>
+              <div class="founders-dropdown" style={{
+                background: "rgba(255, 255, 255, 0.05)",
+                padding: "2rem",
+                "border-radius": "8px",
+                "margin-top": "1rem",
+                "margin-bottom": "2rem",
+                border: "1px solid rgba(0, 0, 0, 0.1)"
+              }}>
+                <div style={{ display: "grid", "grid-template-columns": "repeat(auto-fit, minmax(300px, 1fr))", gap: "2rem" }}>
+                  {founders.map((founder) => (
+                    <div class="founder-card" style={{ display: "flex", gap: "1.5rem", "align-items": "flex-start" }}>
+                      <img
+                        src={founder.imageUrl}
+                        alt={founder.name}
+                        style={{
+                          width: "120px",
+                          height: "120px",
+                          "border-radius": "50%",
+                          "object-fit": "cover",
+                          border: "3px solid var(--color-teal)"
+                        }}
+                      />
+                      <div>
+                        <h4 style={{ margin: "0", color: "var(--color-navy)", "font-size": "1.2rem" }}>{founder.name}</h4>
+                        <p style={{ margin: "0.2rem 0 1rem", color: "var(--color-teal)", "font-weight": "bold", "font-size": "0.9rem" }}>{founder.role}</p>
+                        <p style={{ "font-size": "0.95rem", "line-height": "1.5", "margin-bottom": "1rem" }}>{founder.bio}</p>
+                        <a
+                          href={founder.linkedinUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{
+                            color: "var(--color-navy)",
+                            "text-decoration": "none",
+                            display: "inline-flex",
+                            "align-items": "center",
+                            gap: "0.5rem",
+                            "font-weight": "500"
+                          }}
+                        >
+                          LinkedIn ↗
+                        </a>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </Show>
           </div>
         </div>
       </div>
