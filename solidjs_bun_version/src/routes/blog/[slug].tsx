@@ -1,10 +1,24 @@
 import { Title, Meta } from "@solidjs/meta";
 import { useParams, A } from "@solidjs/router";
-import { createResource, Show, For } from "solid-js";
+import { createResource, Show, For, createSignal, onCleanup, onMount, createMemo } from "solid-js";
 import Header from "~/components/Header";
 import Footer from "~/components/Footer";
 import { getPostBySlug, getRelatedPosts } from "~/lib/sanityApi";
 import { createQuery } from "~/lib/query";
+
+const gradients = [
+  "linear-gradient(135deg, var(--color-navy), var(--color-teal))",
+  "linear-gradient(135deg, var(--color-navy), var(--color-lavender))",
+  "linear-gradient(135deg, var(--color-teal), var(--color-navy))",
+];
+
+function slugifyHeading(text: string): string {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, "")
+    .replace(/\s+/g, "-");
+}
 
 function formatDate(dateStr: string): string {
   const date = new Date(dateStr);
@@ -41,6 +55,97 @@ export default function BlogPost() {
     if (!p.articleType) return "ARTICLES";
     return p.category.toUpperCase();
   };
+
+  const [readingProgress, setReadingProgress] = createSignal(0);
+  const [showBackToTop, setShowBackToTop] = createSignal(false);
+  const [isShareCopied, setIsShareCopied] = createSignal(false);
+
+  const toc = createMemo(() => {
+    const p = post();
+    if (!p || !p.content) return [];
+
+    const items: Array<{ id: string; text: string; level: 2 | 3 }> = [];
+    const idCounts = new Map<string, number>();
+
+    for (const block of p.content as any[]) {
+      if (!block || block._type !== "block") continue;
+      
+      const style = block.style?.toLowerCase() ?? "";
+      const isH2 = style === "h2" || style === "heading2" || style === "h1";
+      const isH3 = style === "h3" || style === "heading3" || style === "h4";
+      
+      if (!isH2 && !isH3) continue;
+
+      const text = (block.children ?? [])
+        .map((c: any) => c?.text ?? "")
+        .join(" ")
+        .trim();
+      if (!text) continue;
+
+      const base = slugifyHeading(text);
+      const next = (idCounts.get(base) ?? 0) + 1;
+      idCounts.set(base, next);
+      const id = next === 1 ? base : `${base}-${next}`;
+      const level = isH3 ? 3 : 2;
+
+      items.push({ id, text, level });
+    }
+
+    return items;
+  });
+
+  const htmlWithIds = createMemo(() => {
+    const p = post();
+    if (!p || !p.htmlContent) return "";
+    
+    let processedHtml = p.htmlContent;
+    const items = toc();
+
+    if (items.length === 0) return processedHtml;
+
+    const counters = { h2: 0, h3: 0 };
+
+    processedHtml = processedHtml.replace(/<(h2|h3)([^>]*)>/g, (_m, tag: "h2" | "h3", attrs: string) => {
+      const level = tag === "h3" ? 3 : 2;
+      const idx = tag === "h3" ? counters.h3 : counters.h2;
+      const candidates = items.filter((it) => it.level === level);
+      const item = candidates[idx];
+      if (tag === "h3") counters.h3 += 1;
+      else counters.h2 += 1;
+      if (!item) return `<${tag}${attrs}>`;
+      return `<${tag}${attrs}><span id="${item.id}" class="anchor-offset"></span>`;
+    });
+    
+    return processedHtml;
+  });
+
+  onMount(() => {
+    if (typeof window === "undefined") return;
+
+    const update = () => {
+      const scrollY = window.scrollY || 0;
+      const docHeight = document.documentElement.scrollHeight || 0;
+      const viewport = window.innerHeight || 0;
+      const total = Math.max(1, docHeight - viewport);
+      const pct = Math.min(100, Math.max(0, (scrollY / total) * 100));
+
+      setReadingProgress(pct);
+      setShowBackToTop(scrollY > 600);
+    };
+
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    onCleanup(() => {
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    });
+  });
+
+  const scrollToTop = () => {
+    if (typeof window === "undefined") return;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
   
   const [relatedPosts] = createResource(
     () => {
@@ -66,12 +171,28 @@ export default function BlogPost() {
     if (navigator.share) {
       navigator.share({ title: currentPost.title, url }).catch(() => {});
     } else if (navigator.clipboard) {
-      navigator.clipboard.writeText(url).catch(() => {});
+      navigator.clipboard.writeText(url).then(() => {
+        setIsShareCopied(true);
+        setTimeout(() => setIsShareCopied(false), 2000);
+      }).catch(() => {});
     }
   };
 
   return (
     <>
+      <div
+        aria-hidden="true"
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: `${readingProgress()}%`,
+          height: "3px",
+          background: "var(--color-teal)",
+          "z-index": 1000,
+          transition: "width 0.1s linear",
+        }}
+      />
       <Title>{post()?.title || "Loading..." } - BBA FinTech</Title>
       <Meta name="description" content={post()?.description || "Read insights on AI, regulatory technology, and financial strategy from BBA FinTech."} />
       <Meta name="og:title" content={post()?.title || "BBA FinTech Blog"} />
@@ -141,14 +262,15 @@ export default function BlogPost() {
               </div>
             </section>
 
-            <section class="blog-content-section" style={{ padding: "6rem 0", background: "var(--color-white)" }}>
-              <div class="container" style={{ "max-width": "850px" }}>
-                <div 
-                  class="blog-article-content"
-                  innerHTML={post()!.htmlContent}
-                />
-                
-                <Show when={post()!.file}>
+            <section class="blog-content-section" style={{ padding: "6rem 0", background: "var(--color-white)", overflow: "visible" }}>
+              <div class="container" style={{ display: "grid", "grid-template-columns": "minmax(0, 850px) 250px", gap: "4rem", "align-items": "start" }}>
+                <div class="blog-main-column">
+                  <div 
+                    class="blog-article-content"
+                    innerHTML={htmlWithIds()}
+                  />
+                  
+                  <Show when={post()!.file}>
                   <div style={{ 
                     "margin-top": "4rem", 
                     padding: "2rem", 
@@ -170,10 +292,70 @@ export default function BlogPost() {
                   </div>
                 </Show>
 
-                <div style={{ "margin-top": "4rem", "padding-top": "2rem", "border-top": "1px solid rgba(0,0,0,0.1)", display: "flex", "justify-content": "space-between", "align-items": "center" }}>
-                  <A href="/blog" class="read-more font-mono">&larr; BACK TO INSIGHTS</A>
-                  <button onClick={shareArticle} class="btn btn-outline" style={{ "padding": "0.5rem 1rem", "font-size": "0.75rem" }}>SHARE ARTICLE</button>
+                  <div style={{ "margin-top": "4rem", "padding-top": "2rem", "border-top": "1px solid rgba(0,0,0,0.1)", display: "flex", "justify-content": "space-between", "align-items": "center" }}>
+                    <A href="/blog" class="read-more font-mono">&larr; BACK TO INSIGHTS</A>
+                    <button onClick={shareArticle} class="btn btn-outline" style={{ "padding": "0.5rem 1rem", "font-size": "0.75rem" }}>
+                      {isShareCopied() ? "LINK COPIED" : "SHARE ARTICLE"}
+                    </button>
+                  </div>
                 </div>
+
+                <aside class="blog-sidebar" style={{ position: "sticky", top: "100px", display: "flex", "flex-direction": "column", gap: "2.5rem" }}>
+                  <Show when={toc().length > 0}>
+                    <div class="toc-container">
+                      <h4 class="font-mono" style={{ "font-size": "0.75rem", "margin-bottom": "1.25rem", "letter-spacing": "0.1em", color: "var(--color-navy)" }}>TABLE OF CONTENTS</h4>
+                      <nav>
+                        <ul style={{ "list-style": "none", padding: 0, margin: 0, display: "flex", "flex-direction": "column", gap: "0.75rem" }}>
+                          <For each={toc()}>
+                            {(item) => (
+                              <li style={{ "padding-left": item.level === 3 ? "0.75rem" : "0" }}>
+                                <a 
+                                  href={`#${item.id}`} 
+                                  class="toc-link font-sans"
+                                  style={{ 
+                                    "text-decoration": "none", 
+                                    color: "var(--color-navy)", 
+                                    "font-size": item.level === 3 ? "0.85rem" : "0.9rem",
+                                    opacity: 0.75,
+                                    transition: "opacity 0.2s, color 0.2s"
+                                  }}
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    if (typeof window === "undefined") return;
+                                    document.getElementById(item.id)?.scrollIntoView({ behavior: "smooth" });
+                                    window.history.pushState(null, "", `#${item.id}`);
+                                  }}
+                                >
+                                  {item.text}
+                                </a>
+                              </li>
+                            )}
+                          </For>
+                        </ul>
+                      </nav>
+                    </div>
+                  </Show>
+
+                  <div class="share-actions-vertical" style={{ "padding-top": "1rem", "border-top": "1px solid rgba(0,0,0,0.05)" }}>
+                     <h4 class="font-mono" style={{ "font-size": "0.75rem", "margin-bottom": "1.5rem", "letter-spacing": "0.1em", color: "var(--color-navy)" }}>SHARE</h4>
+                     <div style={{ display: "flex", gap: "1rem" }}>
+                        <button 
+                          onClick={shareArticle}
+                          title="Copy Link"
+                          style={{ background: "none", border: "1px solid rgba(0,0,0,0.1)", padding: "0.5rem", cursor: "pointer", "border-radius": "4px" }}
+                        >
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                        </button>
+                        <button 
+                          onClick={() => window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`)}
+                          title="Share on LinkedIn"
+                          style={{ background: "none", border: "1px solid rgba(0,0,0,0.1)", padding: "0.5rem", cursor: "pointer", "border-radius": "4px" }}
+                        >
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+                        </button>
+                     </div>
+                  </div>
+                </aside>
               </div>
             </section>
           </article>
@@ -183,18 +365,38 @@ export default function BlogPost() {
               <div class="container">
                 <h2 style={{ "margin-bottom": "3rem", "text-align": "center" }}>RELATED <span class="text-gradient">INSIGHTS</span></h2>
                 <div class="blog-grid">
-                  <For each={relatedPosts()}>
-                    {(rPost) => (
+                   <For each={relatedPosts()}>
+                    {(rPost, i) => (
                       <article class="blog-card">
                         <A href={`/blog/${rPost.slug}`} style={{ "text-decoration": "none", color: "inherit" }}>
-                          <Show when={rPost.image}>
+                          <Show 
+                            when={rPost.image}
+                            fallback={<div class="blog-image" style={{ background: gradients[i() % gradients.length] }}></div>}
+                          >
                             <div class="blog-image" style={{ "background-image": `url(${rPost.image})`, "background-size": "cover", "background-position": "center" }}></div>
                           </Show>
                           <div class="blog-content">
-                            <div class="blog-meta font-mono">{rPost.category}</div>
-                            <h3 style={{ "font-size": "1.1rem" }}>{rPost.title}</h3>
-                            <p style={{ "font-size": "0.85rem", "-webkit-line-clamp": "2" }}>{rPost.description}</p>
-                            <span class="read-more font-mono" style={{ "font-size": "0.8rem" }}>Read More -&gt;</span>
+                            <div style={{ display: "flex", "justify-content": "space-between", "margin-bottom": "0.5rem" }}>
+                                <span class="blog-meta font-mono" style={{ margin: 0 }}>{rPost.category}</span>
+                                <span class="font-mono" style={{ "font-size": "0.7rem", color: "#94A3B8" }}>{formatDate(rPost.date)}</span>
+                            </div>
+                            <h3 style={{ "font-size": "1.1rem", "margin-bottom": "1rem" }}>{rPost.title}</h3>
+                            <p
+                              style={{
+                                "font-size": "0.85rem",
+                                display: "-webkit-box",
+                                "-webkit-line-clamp": "3",
+                                "-webkit-box-orient": "vertical",
+                                overflow: "hidden",
+                                "margin-bottom": "1.5rem"
+                              }}
+                            >
+                              {rPost.description}
+                            </p>
+                            <div style={{ display: "flex", "justify-content": "space-between", "align-items": "center" }}>
+                                <span class="read-more font-mono" style={{ "font-size": "0.8rem" }}>Read More -&gt;</span>
+                                <span class="font-mono" style={{ "font-size": "0.7rem", color: "#64748B" }}>{rPost.readTime}</span>
+                            </div>
                           </div>
                         </A>
                       </article>
@@ -223,7 +425,54 @@ export default function BlogPost() {
         </section>
       </main>
       <Footer />
+      <Show when={showBackToTop()}>
+        <button
+          type="button"
+          aria-label="Back to top"
+          onClick={scrollToTop}
+          style={{
+            position: "fixed",
+            right: "1.25rem",
+            bottom: "1.25rem",
+            width: "44px",
+            height: "44px",
+            "border-radius": "999px",
+            border: "1px solid rgba(255,255,255,0.25)",
+            background: "rgba(10, 22, 44, 0.9)",
+            color: "white",
+            cursor: "pointer",
+            "z-index": 1000,
+            "box-shadow": "0 10px 25px rgba(0,0,0,0.25)",
+          }}
+        >
+          ↑
+        </button>
+      </Show>
       <style>{`
+        .anchor-offset {
+          display: block;
+          position: relative;
+          top: -120px;
+          visibility: hidden;
+        }
+        .toc-container {
+          padding: 1.25rem;
+          background: var(--color-off-white);
+          border: 1px solid rgba(0,0,0,0.06);
+          border-radius: 8px;
+        }
+        .toc-link:hover {
+          opacity: 1 !important;
+          color: var(--color-teal) !important;
+        }
+        @media (max-width: 1024px) {
+          .blog-sidebar {
+            display: none !important;
+          }
+          .blog-content-section .container {
+            grid-template-columns: 1fr !important;
+          }
+        }
         .loader {
           border: 2px solid rgba(255,255,255,0.1);
           border-top: 2px solid var(--color-teal);
