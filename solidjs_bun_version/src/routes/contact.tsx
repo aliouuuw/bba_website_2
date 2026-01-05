@@ -21,7 +21,7 @@ export default function Contact() {
       if (res.ok) {
         setStatus("success");
         setFormData({ name: "", email: "", company: "", message: "", partnership: false });
-        
+
         // Trigger download
         const link = document.createElement("a");
         link.href = "/AI_Powered_Strategy_Playbook.pdf";
@@ -77,12 +77,8 @@ export default function Contact() {
                 </div>
                 <div class="info-item">
                   <h4 style={{ "font-size": "1rem", "margin-bottom": "0.5rem" }}>Location</h4>
-                  <p style={{ "margin-bottom": "2rem" }}>Bahrain FinTech Bay<br />Manama, Kingdom of Bahrain</p>
-                </div>
-                <div style={{ "margin-top": "4rem", padding: "2rem", background: "var(--color-off-white)", "border-radius": "8px", border: "1px solid rgba(0,0,0,0.05)" }}>
-                  <h4 style={{ "margin-bottom": "1rem" }}>Trusted By</h4>
-                  <div style={{ "font-weight": 700, "font-size": "1.25rem", color: "var(--color-navy)", "font-family": "var(--font-mono)", "margin-bottom": "1rem" }}>Bahrain FinTech Bay</div>
-                  <div style={{ "font-weight": 700, "font-size": "1.25rem", color: "var(--color-navy)", "font-family": "var(--font-mono)" }}>Microsoft Cloud Partner</div>
+                  <p style={{ "margin-bottom": "2rem" }}>Bahrain FinTech Bay, Arcapita, 3rd Floor, Bahrain<br />The Exchange Tower, 130 King Street West, Suite 1900 Toronto, M5X 1E3 Ontario
+                  </p>
                 </div>
               </div>
 
@@ -115,7 +111,7 @@ export default function Contact() {
                     <div style={{ "margin-top": "1rem" }}>
                       <p style={{ color: "var(--color-teal)" }}>Message sent successfully!</p>
                       <p style={{ "font-size": "0.875rem", color: "var(--color-navy)", "margin-top": "0.5rem" }}>
-                        Your download of the <strong>AI Powered Strategy Playbook</strong> should start automatically. 
+                        Your download of the <strong>AI Powered Strategy Playbook</strong> should start automatically.
                         If it doesn't, <a href="/AI_Powered_Strategy_Playbook.pdf" download="AI_Powered_Strategy_Playbook.pdf" style={{ color: "var(--color-teal)", "text-decoration": "underline" }}>click here to download manually</a>.
                       </p>
                     </div>
