@@ -32,7 +32,7 @@ export default function RiskAdvisor() {
               <p>Predict, monitor, and mitigate financial and non-financial risks before they impact your business.</p>
               <div style={{ display: "flex", gap: "1rem", "flex-wrap": "wrap" }}>
                 <a href="/contact" class="btn" style={{ background: "var(--color-teal)", color: "var(--color-navy)" }}>Request Your 72-Hour Portfolio Diagnostic</a>
-                <a href="#" class="btn btn-outline" style={{ color: "white", "box-shadow": "inset 0 0 0 2px white" }}>View a Sample Risk Audit Report</a>
+                <a href="/Sample Portfolio Risk & Compliance Health Audit.pdf" target="_blank" class="btn btn-outline" style={{ color: "white", "box-shadow": "inset 0 0 0 2px white" }}>View a Sample Risk Audit Report</a>
               </div>
             </div>
             <div class="hero-visual">
@@ -112,7 +112,7 @@ export default function RiskAdvisor() {
               <h2 style={{ "margin-bottom": "2rem" }}>READY TO TURN DATA INTO DECISIVE ADVANTAGE?</h2>
               <div style={{ display: "flex", gap: "1rem", "flex-wrap": "wrap", "justify-content": "center" }}>
                 <a href="/contact" class="btn" style={{ background: "var(--color-navy)", color: "white" }}>Request Your 72-Hour Portfolio Diagnostic</a>
-                <a href="#" class="btn btn-outline" style={{ color: "var(--color-navy)", "box-shadow": "inset 0 0 0 2px var(--color-navy)" }}>View a Sample Risk Audit Report</a>
+                <a href="/Sample Portfolio Risk & Compliance Health Audit.pdf" target="_blank" class="btn btn-outline" style={{ color: "var(--color-navy)", "box-shadow": "inset 0 0 0 2px var(--color-navy)" }}>View a Sample Risk Audit Report</a>
               </div>
             </div>
           </div>

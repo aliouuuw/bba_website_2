@@ -114,7 +114,7 @@ export default function PainPoints() {
               </ul>
             </ExpandableItem>
 
-            <div class="pain-item" style={{ "margin-top": "2rem", "padding-top": "2rem", "border-top": "1px solid var(--color-navy)" }}>
+            <div class="pain-item" style={{ "margin-top": "2rem", "padding-top": "2rem" }}>
               <h3 style={{ color: "var(--color-navy)", "margin-bottom": "1rem" }}>FROM PAIN POINTS TO PROVEN OUTCOMES</h3>
               <p style={{ "margin-bottom": "1rem" }}>
                 Our approach doesn't just identify problems—we deliver quantifiable transformation. By applying our core capabilities directly to your specific pain points, we create a virtuous cycle of improvement:
@@ -129,19 +129,14 @@ export default function PainPoints() {
               <p style={{ "font-size": "1rem", "font-weight": "600", color: "var(--color-navy)" }}>
                 Ready to transform your challenges into measurable results?
               </p>
-            </div>
-          </div>
-
-          <div class="reveal-up" style={{ display: "flex", "flex-direction": "column", "justify-content": "center", gap: "2rem" }}>
-            <div style={{ background: "var(--color-navy)", padding: "2rem", "clip-path": "var(--clip-card)", color: "white" }}>
-              <h3 style={{ color: "var(--color-teal)", "margin-bottom": "1rem" }}>CORE CAPABILITIES</h3>
-              <ul class="core-caps-list">
-                <li><strong>Scoring Models:</strong> Build and validate robust models with transparent data lineage.</li>
-                <li><strong>Expected Credit Loss & Stress Testing:</strong> Proactive risk management through advanced calculations.</li>
-                <li><strong>Balance Sheet Modeling & ALM:</strong> Earnings at Risk, Economic Value at Risk, Liquidity & Regulatory Ratios.</li>
-                <li><strong>Funds Transfer Pricing:</strong> Optimized FTP frameworks to enhance profitability.</li>
-                <li><strong>Model Risk Management:</strong> Comprehensive validation, testing, and governance.</li>
-              </ul>
+              <div style={{ "margin-top": "1.5rem", display: "flex", gap: "1rem", "flex-wrap": "wrap" }}>
+                <a href="/contact" class="btn" style={{ background: "var(--color-navy)", color: "white" }}>
+                  Speak with a Financial Solutions Architect
+                </a>
+                <a href="/blog" class="btn" style={{ background: "var(--color-teal)", color: "var(--color-navy)" }}>
+                  See Relevant Case Studies
+                </a>
+              </div>
             </div>
           </div>
         </div>

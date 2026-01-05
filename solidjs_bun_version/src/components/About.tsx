@@ -36,10 +36,10 @@ export default function About() {
             <p style={{ "margin-bottom": "1rem" }}>Ready to close your Decision Gap?</p>
             <div style={{ "margin-bottom": "1rem", display: "flex", gap: "1rem", "flex-wrap": "wrap" }}>
               <a href="/contact" class="btn" style={{ background: "var(--color-navy)", color: "white" }}>
-                Meet Our Founders
+                Speak with a Financial Solutions Architect
               </a>
-              <a href="/contact" class="btn" style={{ background: "var(--color-teal)", color: "var(--color-navy)" }}>
-                Book a Strategy Session
+              <a href="/blog" class="btn" style={{ background: "var(--color-teal)", color: "var(--color-navy)" }}>
+                See Relevant Case Studies
               </a>
             </div>
           </div>

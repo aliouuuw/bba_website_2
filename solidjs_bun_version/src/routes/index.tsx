@@ -20,7 +20,7 @@ export default function Home() {
         <Platform />
         <PainPoints />
         <Clients />
-        <Testimonials ids={[1, 2]} />
+        <Testimonials ids={[1, 2, 3]} />
         <Solutions />
         <About />
         <CTA />
