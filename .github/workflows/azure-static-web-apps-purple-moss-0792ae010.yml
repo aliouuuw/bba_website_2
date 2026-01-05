@@ -37,6 +37,10 @@ jobs:
         working-directory: solidjs_bun_version
         run: bun run build
 
+      - name: Install API dependencies
+        working-directory: api
+        run: bun install
+
       # Copy SWA config into the static output folder
       - name: Include SWA config in uploaded app artifact
         working-directory: solidjs_bun_version
@@ -57,6 +61,7 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
           app_location: "solidjs_bun_version/.output/public"
+          api_location: "api"
           skip_app_build: true
 
   close_pull_request_job:
@@ -70,3 +75,5 @@ jobs:
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_PURPLE_MOSS_0792AE010 }}
           action: "close"
+          app_location: "solidjs_bun_version/.output/public"
+          api_location: "api"

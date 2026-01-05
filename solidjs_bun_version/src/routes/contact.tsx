@@ -6,10 +6,12 @@ import Footer from "~/components/Footer";
 export default function Contact() {
   const [formData, setFormData] = createSignal({ name: "", email: "", company: "", message: "", partnership: false });
   const [status, setStatus] = createSignal<"idle" | "loading" | "success" | "error">("idle");
+  const [errorMessage, setErrorMessage] = createSignal<string>("");
 
   const handleSubmit = async (e: Event) => {
     e.preventDefault();
     setStatus("loading");
+    setErrorMessage("");
     try {
       const res = await fetch("/api/contact", {
         method: "POST",
@@ -28,9 +30,19 @@ export default function Contact() {
         link.click();
         document.body.removeChild(link);
       } else {
+        let message = "Failed to send. Please try again.";
+        try {
+          const data = await res.json();
+          if (typeof data?.error === "string") message = data.error;
+          else if (typeof data?.error?.message === "string") message = data.error.message;
+        } catch {
+          // ignore
+        }
+        setErrorMessage(message);
         setStatus("error");
       }
     } catch {
+      setErrorMessage("Network error. Please try again.");
       setStatus("error");
     }
   };
@@ -108,7 +120,11 @@ export default function Contact() {
                       </p>
                     </div>
                   )}
-                  {status() === "error" && <p style={{ color: "#F43F5E", "margin-top": "1rem" }}>Failed to send. Please try again.</p>}
+                  {status() === "error" && (
+                    <p style={{ color: "#F43F5E", "margin-top": "1rem" }}>
+                      {errorMessage() || "Failed to send. Please try again."}
+                    </p>
+                  )}
                 </form>
               </div>
             </div>
