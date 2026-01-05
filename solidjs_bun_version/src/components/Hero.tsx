@@ -73,7 +73,6 @@ export default function Hero() {
                   <div style={{ "font-size": "2.5rem", "font-weight": "700", color: "var(--color-lavender)" }}>
                     $2.4M
                   </div>
-                  <div style={{ "font-size": "0.875rem", color: "rgba(255,255,255,0.6)" }}>Projected Annual</div>
                 </div>
               </div>
               <div style={{ position: "relative", overflow: "hidden" }}>
