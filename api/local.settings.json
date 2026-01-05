@@ -1,0 +1,10 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "",
+    "FUNCTIONS_WORKER_RUNTIME": "node",
+    "AzureWebJobsFeatureFlags": "EnableWorkerIndexing",
+    "RESEND_API_KEY": "re_XCyBoyT2_55DfNTCM5EqGbEw7LmkVXHby",
+    "CONTACT_EMAIL": "aliou@bbafintech.com"
+  }
+}

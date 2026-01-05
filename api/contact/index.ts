@@ -1,21 +1,11 @@
-import { AzureFunction, Context, HttpRequest } from "@azure/functions";
+import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
 import { Resend } from "resend";
 
-const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
+export async function contact(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
   context.log("HTTP trigger function processed a request.");
 
-  // Only allow POST
-  if (req.method !== "POST") {
-    context.res = {
-      status: 405,
-      headers: { "Content-Type": "application/json" },
-      body: { error: "Method not allowed" },
-    };
-    return;
-  }
-
   try {
-    const body = req.body;
+    const body = await request.json() as any;
     const name = typeof body?.name === "string" ? body.name.trim() : "";
     const email = typeof body?.email === "string" ? body.email.trim() : "";
     const company = typeof body?.company === "string" ? body.company.trim() : "";
@@ -23,24 +13,20 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     const partnership = Boolean(body?.partnership);
 
     if (!name || !email || !message) {
-      context.res = {
+      return {
         status: 400,
-        headers: { "Content-Type": "application/json" },
-        body: { error: "Missing required fields: name, email, message" },
+        jsonBody: { error: "Missing required fields: name, email, message" },
       };
-      return;
     }
 
     const resendApiKey = process.env.RESEND_API_KEY;
     const contactEmail = process.env.CONTACT_EMAIL || "contact@bbafintech.com";
 
     if (!resendApiKey) {
-      context.res = {
+      return {
         status: 500,
-        headers: { "Content-Type": "application/json" },
-        body: { error: "Missing RESEND_API_KEY" },
+        jsonBody: { error: "Missing RESEND_API_KEY" },
       };
-      return;
     }
 
     const resend = new Resend(resendApiKey);
@@ -72,29 +58,29 @@ ${message}
     });
 
     if (error) {
-      context.log.error("Resend error:", error);
-      context.res = {
+      context.error("Resend error:", error);
+      return {
         status: 400,
-        headers: { "Content-Type": "application/json" },
-        body: { error: error.message || "Failed to send email" },
+        jsonBody: { error: error.message || "Failed to send email" },
       };
-      return;
     }
 
     context.log("Email sent successfully:", data);
-    context.res = {
+    return {
       status: 200,
-      headers: { "Content-Type": "application/json" },
-      body: { success: true, data },
+      jsonBody: { success: true, data },
     };
   } catch (err) {
-    context.log.error("Server error:", err);
-    context.res = {
+    context.error("Server error:", err);
+    return {
       status: 500,
-      headers: { "Content-Type": "application/json" },
-      body: { error: "Internal Server Error" },
+      jsonBody: { error: "Internal Server Error" },
     };
   }
-};
+}
 
-export default httpTrigger;
+app.http('contact', {
+    methods: ['POST'],
+    authLevel: 'anonymous',
+    handler: contact
+});
