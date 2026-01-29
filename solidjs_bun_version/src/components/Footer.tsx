@@ -17,7 +17,7 @@ export default function Footer() {
             <a href="/privacy">Privacy Policy</a>
             <a href="#" onClick={(e) => { e.preventDefault(); openPreferences(); }}>Cookie Settings</a>
             <a href="/privacy">Terms of Service</a>
-            <a href="#">Careers</a>
+            <a href="/careers">Careers</a>
           </div>
           <div class="footer-social">
             <h4>Social</h4>
