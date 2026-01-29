@@ -10,7 +10,7 @@ export default function About() {
       bio:
         "Throughout his 20+ year career, in positions with management responsibility and also as a consultant, Sohail has worked at the forefront of developing analytical solutions using digital technology.",
       imageUrl: "/founders/Sohail.png",
-      linkedinUrl: "https://ca.linkedin.com/in/sohail-farooq-mqf-msc-mba-05b4403",
+      linkedinUrl: "http://www.linkedin.com/in/sohail-farooq-05b4403",
     },
   ];
 

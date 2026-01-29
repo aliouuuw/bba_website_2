@@ -212,7 +212,7 @@ function ProductTabs(props: {
           </div>
 
           <div style={{ "margin-top": "2rem" }}>
-            <a href={props.cta.link} class="btn btn-outline">{props.cta.text}</a>
+            <a href={props.cta.link} target="_blank" rel="noopener noreferrer" class="btn btn-outline">{props.cta.text}</a>
           </div>
         </div>
         <div class="solution-visual">

@@ -91,7 +91,7 @@ export default function Privacy() {
               </ul>
 
               <p style={{ "margin-bottom": "1.5rem" }}>
-                To exercise these rights, contact us at <a href="mailto:privacy@bbafintech.com" style={{ color: "var(--color-teal)", "text-decoration": "underline" }}>privacy@bbafintech.com</a>.
+                To exercise these rights, contact us at <a href="mailto:contact@bbafintech.com" style={{ color: "var(--color-teal)", "text-decoration": "underline" }}>contact@bbafintech.com</a>.
               </p>
 
               <h2 id="cookies" style={{ "margin-top": "3rem", "margin-bottom": "1.5rem", color: "var(--color-navy)" }}>Cookie Policy</h2>
@@ -191,8 +191,9 @@ export default function Privacy() {
               </p>
 
               <ul style={{ "margin-bottom": "2rem", "padding-left": "2rem", "list-style": "none" }}>
-                <li style={{ "margin-bottom": "0.5rem" }}><strong>Email:</strong> <a href="mailto:privacy@bbafintech.com" style={{ color: "var(--color-teal)", "text-decoration": "underline" }}>privacy@bbafintech.com</a></li>
-                <li style={{ "margin-bottom": "0.5rem" }}><strong>Address:</strong> Bahrain FinTech Bay, Arcapita, 3rd Floor, Bahrain</li>
+                <li style={{ "margin-bottom": "0.5rem" }}><strong>Email:</strong> <a href="mailto:contact@bbafintech.com" style={{ color: "var(--color-teal)", "text-decoration": "underline" }}>contact@bbafintech.com</a></li>
+                <li style={{ "margin-bottom": "0.5rem" }}><strong>BBA FinTech Corp., The Exchange Tower, 130 King Street West, Suite 1900, Toronto, Ontario M5X 1E3, Canada</strong></li>
+                <li style={{ "margin-bottom": "0.5rem" }}><strong>BBA Bahrain FinTech WLL, Bahrain FinTech Bay, Arcapita, 3rd Floor, Kingdom of Bahrain</strong></li>
               </ul>
 
               <h3 style={{ "margin-top": "2rem", "margin-bottom": "1rem", color: "var(--color-navy)" }}>Changes to This Policy</h3>

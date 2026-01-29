@@ -60,29 +60,29 @@ export default function PainPoints() {
 
             <ExpandableItem title="🔍 2. POOR DATA GOVERNANCE & CONTROL">
               <p style={{ "margin-bottom": "0.75rem" }}>
-                <strong>The Problem:</strong> When the regulator asks for data lineage, does your team dread the costly scavenger hunt? Siloed, inconsistent data without clear audit trails erodes trust and complicates compliance.
+                <strong>The Problem:</strong> For any AI project to secure regulatory approval, robust data governance isn't optional - it's essential. Without it, proving model integrity becomes a costly, manual chase. Siloed data and missing audit trails erode trust, delay approvals, and introduce compliance risk.
               </p>
               <p style={{ color: "var(--color-navy)", "font-weight": "600", "font-size": "0.9rem", "margin-bottom": "0.75rem" }}>
-                Our Solution in Action: We provide a unified, secure ecosystem with robust data governance, full audit trails, and secure lineage for a single source of truth.
+                Our Solution in Action: We provide the governance backbone required for regulatory-ready AI - delivering secure data lineage, full auditability, and controlled model management to accelerate approval and ensure compliance.
               </p>
               <p style={{ "font-size": "0.9rem", "margin-bottom": "0.5rem" }}>
-                <strong>How We Fix It:</strong>
+                <strong>How We Build Regulator-Trusted AI:</strong>
               </p>
               <ul style={{ "font-size": "0.9rem", "margin-left": "1.5rem", "margin-bottom": "0.75rem" }}>
-                <li>Scoring Models: Build and validate robust models with transparent data lineage</li>
-                <li>Model Risk Management: Comprehensive validation, testing, and governance</li>
-                <li>Audit & Compliance Ready: Full audit trails and report archiving</li>
+                <li>AI Model Assurance: Develop validated models with complete, transparent data lineage</li>
+                <li>Model Risk Management: End-to-end validation, testing, and governance for regulator confidence</li>
+                <li>Audit-Ready AI Frameworks: Maintain full audit trails, version control, and archived reporting</li>
               </ul>
               <p style={{ "font-size": "0.9rem", "font-weight": "600", "margin-bottom": "0.5rem" }}>
                 Typical Client Results:
               </p>
               <ul style={{ "font-size": "0.85rem", "margin-left": "1.5rem", "margin-bottom": "0.75rem" }}>
-                <li>🔗 Data Silos Removed: 4 disconnected systems integrated</li>
-                <li>🔗 Critical Data Elements Defined: 125 key metrics standardized</li>
-                <li>🔗 Data Lineage Documented: 100% of automated reports fully traceable</li>
-                <li>🔗 Data Quality Issues Resolved: ~40 inconsistencies corrected</li>
+                <li>🔗 Data Silos Removed: 4 disconnected systems integrated under a unified governance framework</li>
+                <li>🔗 Critical Data Elements Defined: 125 key model inputs and metrics standardized and controlled</li>
+                <li>🔗 AI Data Lineage Documented: 100% of automated models and reports fully traceable for audits</li>
+                <li>🔗 Data Quality Issues Resolved: ~40 inconsistencies corrected to ensure reliable AI outcomes</li>
                 <li>✅ Audit Preparation Time: Reduced from 12 weeks to 10 days</li>
-                <li>✅ Regulatory Penalties Avoided: $500K in potential fines eliminated</li>
+                <li>✅ Regulatory Approval Accelerated: $500K in potential fines avoided and faster sign-off achieved</li>
               </ul>
             </ExpandableItem>
 

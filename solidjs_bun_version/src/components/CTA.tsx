@@ -12,9 +12,6 @@ export default function CTA() {
               WATCH PLATFORM OVERVIEW
             </a>
           </div>
-          <div style={{ "margin-top": "2rem", "font-size": "0.875rem", opacity: "0.6" }}>
-            Trusted by Bahrain FinTech Bay • Microsoft Cloud Partner
-          </div>
         </div>
       </div>
     </section>

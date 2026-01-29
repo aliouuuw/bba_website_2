@@ -5,6 +5,8 @@ export default function Hero() {
   const [accuracy, setAccuracy] = createSignal(0);
   const [savings, setSavings] = createSignal(0);
   const { navigateToAnchor } = useAnchorNavigation();
+  const highlightWords = ["Faster.", "Smarter.", "Predictive."];
+  const [highlightIndex, setHighlightIndex] = createSignal(0);
 
   onMount(() => {
     const duration = 1500;
@@ -19,6 +21,13 @@ export default function Hero() {
     };
 
     requestAnimationFrame(animate);
+  });
+
+  onMount(() => {
+    const animateWords = setInterval(() => {
+      setHighlightIndex((prev) => (prev + 1) % highlightWords.length);
+    }, 1800);
+    return () => clearInterval(animateWords);
   });
 
   return (
@@ -36,12 +45,16 @@ export default function Hero() {
           <div class="font-mono text-gradient reveal-slide" style={{ "margin-bottom": "1.5rem", "font-size": "0.875rem", "letter-spacing": "0.05em" }}>
             // AI-POWERED INTELLIGENCE
           </div>
-          <h1 class="reveal-slide">
-            FROM DATA TO DECISION <br />
-            <span class="text-gradient">WITH AI INTELLIGENCE</span>
+          <h1 class="reveal-slide" style={{ position: "relative" }}>
+            From Data to Decisions.
+            <span class="highlight-word text-gradient" style={{ position: "absolute", "min-width": "120px", "display": "inline-block" }}>{highlightWords[highlightIndex()]}</span>
+            <span style={{ visibility: "hidden", "color": "transparent" }}>Predictive.</span>
           </h1>
-          <p class="reveal-slide">
-            Move beyond dashboards into action. Get strategic recommendations, proactive risk alerts, and automated compliance—powered by AI.
+          <p class="highlight-subtext reveal-slide" style={{ "font-style": "italic", "font-weight": "500" }}>
+            AI-Powered Decision Intelligence for Complex Enterprises
+          </p>
+          <p class="hero-subtitle reveal-slide">
+            Unifying finance, treasury, risk and compliance into a single intelligent command layer — so leaders can anticipate risk, optimize performance, and act decisively.
           </p>
           <div class="reveal-slide" style={{ display: "flex", gap: "1rem", "flex-wrap": "wrap" }}>
             <a href="#contact" class="btn" style={{ background: "var(--color-teal)", color: "var(--color-navy)" }} onClick={(e) => { e.preventDefault(); navigateToAnchor("#contact"); }}>

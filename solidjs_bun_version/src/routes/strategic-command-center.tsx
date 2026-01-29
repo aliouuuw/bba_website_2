@@ -35,7 +35,7 @@ export default function StrategicCommandCenter() {
               <p>Your AI co-pilot for market leadership. See where you stand—and where to go next with predictive insights and automated strategy generation.</p>
               <div style={{ display: "flex", gap: "1rem", "flex-wrap": "wrap" }}>
                 <a href="/contact" class="btn" style={{ background: "var(--color-teal)", color: "var(--color-navy)" }}>Get Your 48-Hour Competitive Analysis</a>
-                <a href="/BBA - Data Visualization and Reporting Automation Use Cases v2.pptx" download="BBA - Data Visualization and Reporting Automation Use Cases v2.pptx" class="btn btn-outline" style={{ color: "white", "box-shadow": "inset 0 0 0 2px white" }}>Download the Strategy Leader's Playbook</a>
+                <a href="/AI_Powered_Strategy_Playbook.pdf" download="AI_Powered_Strategy_Playbook.pdf" class="btn btn-outline" style={{ color: "white", "box-shadow": "inset 0 0 0 2px white" }}>Download the Strategy Leader's Playbook</a>
               </div>
             </div>
             <div class="hero-visual">
@@ -114,7 +114,7 @@ export default function StrategicCommandCenter() {
               <h2 style={{ "margin-bottom": "2rem" }}>READY TO TURN DATA INTO DECISIVE ADVANTAGE?</h2>
               <div style={{ display: "flex", gap: "1rem", "flex-wrap": "wrap", "justify-content": "center" }}>
                 <a href="/contact" class="btn" style={{ background: "var(--color-navy)", color: "white" }}>Get Your 48-Hour Competitive Analysis</a>
-                <a href="/BBA - Data Visualization and Reporting Automation Use Cases v2.pptx" download="BBA - Data Visualization and Reporting Automation Use Cases v2.pptx" class="btn btn-outline" style={{ color: "var(--color-navy)", "box-shadow": "inset 0 0 0 2px var(--color-navy)" }}>Download the Strategy Leader's Playbook</a>
+                <a href="/AI_Powered_Strategy_Playbook.pdf" download="AI_Powered_Strategy_Playbook.pdf" class="btn btn-outline" style={{ color: "var(--color-navy)", "box-shadow": "inset 0 0 0 2px var(--color-navy)" }}>Download the Strategy Leader's Playbook</a>
               </div>
             </div>
           </div>

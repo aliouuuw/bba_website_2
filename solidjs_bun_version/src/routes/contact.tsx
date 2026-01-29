@@ -77,7 +77,11 @@ export default function Contact() {
                 </div>
                 <div class="info-item">
                   <h4 style={{ "font-size": "1rem", "margin-bottom": "0.5rem" }}>Location</h4>
-                  <p style={{ "margin-bottom": "2rem" }}>Bahrain FinTech Bay, Arcapita, 3rd Floor, Bahrain<br />The Exchange Tower, 130 King Street West, Suite 1900 Toronto, M5X 1E3 Ontario
+                  <p style={{ "margin-bottom": "2rem" }}>
+                    <strong>Canada Office:</strong><br />
+                    BBA FinTech Corp., The Exchange Tower, 130 King Street West, Suite 1900, Toronto, Ontario M5X 1E3, Canada<br /><br />
+                    <strong>Bahrain Office:</strong><br />
+                    BBA Bahrain FinTech WLL., Bahrain FinTech Bay, Arcapita, 3rd Floor, Kingdom of Bahrain
                   </p>
                 </div>
               </div>
