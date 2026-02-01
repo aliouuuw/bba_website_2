@@ -81,34 +81,21 @@ export default function About() {
               }}>
                 <div style={{ display: "grid", "grid-template-columns": "repeat(auto-fit, minmax(300px, 1fr))", gap: "2rem" }}>
                   {founders.map((founder) => (
-                    <div class="founder-card" style={{ display: "flex", gap: "1.5rem", "align-items": "flex-start" }}>
+                    <div class="founder-card">
                       <img
                         src={founder.imageUrl}
                         alt={founder.name}
-                        style={{
-                          width: "120px",
-                          height: "120px",
-                          "border-radius": "50%",
-                          "object-fit": "cover",
-                          border: "3px solid var(--color-teal)"
-                        }}
+                        class="founder-image"
                       />
-                      <div>
-                        <h4 style={{ margin: "0", color: "var(--color-navy)", "font-size": "1.2rem" }}>{founder.name}</h4>
-                        <p style={{ margin: "0.2rem 0 1rem", color: "var(--color-teal)", "font-weight": "bold", "font-size": "0.9rem" }}>{founder.role}</p>
-                        <p style={{ "font-size": "0.95rem", "line-height": "1.5", "margin-bottom": "1rem" }}>{founder.bio}</p>
+                      <div class="founder-info">
+                        <h4>{founder.name}</h4>
+                        <p class="founder-role">{founder.role}</p>
+                        <p class="founder-bio">{founder.bio}</p>
                         <a
                           href={founder.linkedinUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          style={{
-                            color: "var(--color-navy)",
-                            "text-decoration": "none",
-                            display: "inline-flex",
-                            "align-items": "center",
-                            gap: "0.5rem",
-                            "font-weight": "500"
-                          }}
+                          class="founder-linkedin"
                         >
                           LinkedIn ↗
                         </a>

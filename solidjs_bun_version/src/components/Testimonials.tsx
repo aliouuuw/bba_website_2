@@ -27,46 +27,35 @@ export default function Testimonials(props: { ids?: number[] }) {
   };
 
   return (
-    <section class="testimonials" style={{ "padding-top": "2rem", "padding-bottom": "8rem", background: "linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)" }}>
+    <section class="testimonials">
       <div class="container">
-        <div style={{ "text-align": "center", "margin-bottom": "4rem" }}>
-          <p style={{ "font-size": "0.875rem", color: "#64748B", "margin-bottom": "1rem", "text-transform": "uppercase", "letter-spacing": "0.05em", "font-weight": "600" }}>
+        <div class="testimonials-header">
+          <p class="testimonials-label">
             Trusted by Leaders
           </p>
-          <h2 style={{ "font-size": "2.5rem", color: "var(--color-navy)", "font-weight": "700", "margin-bottom": "1rem" }}>
+          <h2>
             What Our Clients Say
           </h2>
-          <p style={{ "font-size": "1.125rem", color: "#475569", "max-width": "600px", margin: "0 auto" }}>
+          <p class="testimonials-subtitle">
             Real results from financial leaders who transformed their operations with BBA
           </p>
         </div>
 
-        <div style={{ display: "grid", "grid-template-columns": "repeat(auto-fit, minmax(350px, 1fr))", gap: "2rem", "margin-top": "3rem" }}>
+        <div class="testimonials-grid">
           {visibleTestimonials().map(testimonial => (
-            <div
-              style={{
-                background: "white",
-                padding: "2rem",
-                "border-radius": "12px",
-                "box-shadow": "0 2px 8px rgba(0,0,0,0.08)",
-                transition: "all 0.3s ease",
-                display: "flex",
-                "flex-direction": "column",
-              }}
-              class="testimonial-card"
-            >
-              <div style={{ "margin-bottom": "1.5rem" }}>
-                <p style={{ "font-size": "0.75rem", color: "#0f766e", background: "#ccfbf1", padding: "0.5rem 1rem", "border-radius": "20px", display: "inline-block", "font-weight": "600" }}>
+            <div class="testimonial-card">
+              <div class="testimonial-pain-wrapper">
+                <p class="testimonial-pain-point">
                   {testimonial.painPoint}
                 </p>
               </div>
 
-              <blockquote style={{ "font-size": "1rem", "line-height": "1.6", color: "#1e293b", "margin-bottom": "2rem", "flex-grow": "1", "font-style": "italic" }}>
+              <blockquote class="testimonial-quote">
                 "{testimonial.quote}"
               </blockquote>
 
-              <div style={{ "border-top": "1px solid #e2e8f0", "padding-top": "1.5rem" }}>
-                <p style={{ color: "var(--color-navy)", "font-weight": "600", "margin-bottom": "0.25rem" }}>
+              <div class="testimonial-footer">
+                <p class="testimonial-author">
                   {testimonial.author}
                 </p>
               </div>
