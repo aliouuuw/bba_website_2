@@ -1,6 +1,7 @@
 import { Title } from "@solidjs/meta";
 import Header from "~/components/Header";
 import Footer from "~/components/Footer";
+import ComplianceBadge from "~/components/ComplianceBadge";
 import Testimonials from "~/components/Testimonials";
 
 const features = [
@@ -120,6 +121,7 @@ export default function StrategicCommandCenter() {
           </div>
         </section>
       </main>
+      <ComplianceBadge />
       <Footer />
     </>
   );

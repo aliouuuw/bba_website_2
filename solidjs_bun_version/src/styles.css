@@ -734,6 +734,46 @@ section {
   margin: 0 auto;
 }
 
+/* Compliance Section */
+.compliance-section {
+  padding: var(--space-xl) 0;
+  background: var(--color-navy-dark);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.compliance-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.compliance-badge-link {
+  display: inline-block;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+  width: 100%;
+  max-width: 100%;
+}
+
+.compliance-badge-link:hover {
+  opacity: 0.85;
+}
+
+.compliance-badge-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+@media (max-width: 768px) {
+  .compliance-section {
+    padding: var(--space-lg) 0;
+  }
+}
+
 /* Footer */
 .footer {
   background: var(--color-navy-dark);

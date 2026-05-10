@@ -2,6 +2,7 @@ import { createSignal, Show } from "solid-js";
 import { Title } from "@solidjs/meta";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import ComplianceBadge from "../components/ComplianceBadge";
 
 export default function Careers() {
   const [formData, setFormData] = createSignal({
@@ -233,6 +234,7 @@ export default function Careers() {
           </div>
         </section>
       </main>
+      <ComplianceBadge />
       <Footer />
     </>
   );

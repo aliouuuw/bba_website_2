@@ -1,6 +1,7 @@
 import { Title } from "@solidjs/meta";
 import Header from "~/components/Header";
 import Footer from "~/components/Footer";
+import ComplianceBadge from "~/components/ComplianceBadge";
 import { openPreferences } from "~/lib/cookieConsent";
 
 export default function Privacy() {
@@ -219,6 +220,7 @@ export default function Privacy() {
           </div>
         </section>
       </main>
+      <ComplianceBadge />
       <Footer />
     </>
   );

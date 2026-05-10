@@ -8,6 +8,7 @@ import Testimonials from "~/components/Testimonials";
 import Solutions from "~/components/Solutions";
 import About from "~/components/About";
 import CTA from "~/components/CTA";
+import ComplianceBadge from "~/components/ComplianceBadge";
 import Footer from "~/components/Footer";
 
 export default function Home() {
@@ -25,6 +26,7 @@ export default function Home() {
         <About />
         <CTA />
       </main>
+      <ComplianceBadge />
       <Footer />
     </>
   );

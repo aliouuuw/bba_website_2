@@ -1,6 +1,7 @@
 import { Title } from "@solidjs/meta";
 import Header from "~/components/Header";
 import Footer from "~/components/Footer";
+import ComplianceBadge from "~/components/ComplianceBadge";
 
 const features = [
   { icon: "01", title: "Pre-built RegTech Templates", description: "Ready-to-use templates for Basel, IFRS 9, AML/KYC, NCCF, LCR, and more—constantly updated." },
@@ -127,6 +128,7 @@ export default function ComplianceCopilot() {
           </div>
         </section>
       </main>
+      <ComplianceBadge />
       <Footer />
     </>
   );
