@@ -734,42 +734,94 @@ section {
   margin: 0 auto;
 }
 
-/* Compliance Section */
-.compliance-section {
+/* Security / Compliance Section */
+.security-section {
   padding: var(--space-xl) 0;
-  background: var(--color-navy-dark);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--color-white);
+  border-top: 1px solid rgba(45, 42, 94, 0.1);
 }
 
-.compliance-content {
-  display: flex;
-  justify-content: center;
+.security-section .security-grid {
+  grid-template-columns: 1fr 1fr;
   align-items: center;
-  width: 100%;
+  gap: clamp(2rem, 5vw, 4rem);
 }
 
-.compliance-badge-link {
-  display: inline-block;
-  text-decoration: none;
-  transition: opacity 0.2s ease;
-  width: 100%;
-  max-width: 100%;
+.compliance-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
 }
 
-.compliance-badge-link:hover {
-  opacity: 0.85;
+.compliance-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  aspect-ratio: 1;
+  padding: 1.5rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  min-height: 0;
 }
 
-.compliance-badge-image {
+.compliance-tile-corner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 14px 14px 0 0;
+  border-color: var(--color-teal) transparent transparent transparent;
+}
+
+.compliance-tile-label {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #94a3b8;
+  z-index: 1;
+}
+
+.compliance-tile-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
   width: 100%;
+  z-index: 1;
+}
+
+.compliance-tile-image {
+  width: auto;
   height: auto;
-  display: block;
-  max-width: 100%;
+  max-width: min(72%, 140px);
+  max-height: min(55%, 120px);
   object-fit: contain;
+  display: block;
+}
+
+.compliance-tile-svg {
+  width: min(58%, 110px);
+  height: auto;
+  color: var(--color-navy);
+}
+
+@media (max-width: 1024px) {
+  .security-section .compliance-grid {
+    max-width: 520px;
+    margin: 0 auto;
+    width: 100%;
+  }
 }
 
 @media (max-width: 768px) {
-  .compliance-section {
+  .security-section {
     padding: var(--space-lg) 0;
   }
 }
